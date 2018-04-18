@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>检测规则&教程</title>
+    
+    {% include "common/head.html"%}
+
+    <style type="text/css">
+        .navbar {
+            margin-bottom: 0;
+        }
+
+        .col-checkrule {
+            position:fixed;
+            /*height: 100vh;*/
+            overflow:auto;
+            top: 64px;
+            bottom: 0;
+        }
+
+        .menu-checkrule ul {
+            margin-right: -12px;
+        }
+
+        .menu-checkrule li {
+            padding:5px 10px 5px 30px;
+        }
+
+        .menu-checkrule a {
+            text-decoration: none;
+        }
+
+        .menu-active {
+            background-color: rgba(0, 150, 136, 0.1);
+        }
+
+        .font-large {
+            font-size:1.2em;
+        }
+
+        li:hover {
+            background-color: rgba(0, 150, 136, 0.1);
+        }
+
+    </style>
+
+</head>
+<body>
+{% include "common/navbar.html" %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 col-xs-3 menu-checkrule col-checkrule" style="padding-top: 10px;padding-left: 0;" id="menuCheckrule">
+            <ul class="list-unstyled">
+                <a href="#keganzhixing"><li class="withripple menu-active"><strong class="font-large">可感知性</strong></li></a>
+                <a href="#yanzhengma"><li class="withripple">验证码（等级1/等级2）</li></a>
+                <a href="#wenbendaxiaotiaozheng"><li class="withripple">文本大小调整（等级3）</li></a>
+                <a href="#duomeiti"><li class="withripple">多媒体（等级2）</li></a>
+                <a href="#yuluduomeiti"><li class="withripple">预录多媒体（等级3）</li></a>
+                <a href="#kecaozuoxing"><li class="withripple"><strong class="font-large">可操作性</strong></li></a>
+                <a href="#jianpancaozuo"><li class="withripple">键盘操作（等级3）</li></a>
+                <a href="#jianpanjiaodianxianru"><li class="withripple">键盘焦点陷入（等级1/等级3）</li></a>
+                <a href="#duomeitibofangkongzhi"><li class="withripple">多媒体播放控制（等级3）</li></a>
+                <a href="#tiaoguodaohanglan"><li class="withripple">跳过导航栏（等级3）</li></a>
+                <a href="#bankuaitiaozhuan"><li class="withripple">板块跳转（等级3）</li></a>
+                <a href="#chongzucaozuoshijian"><li class="withripple">充足操作时间（等级2）</li></a>
+                <a href="#wupiaofuchuang"><li class="withripple">无漂浮窗（等级1）</li></a>
+                <a href="#shurutishi"><li class="withripple">输入提示（等级2）</li></a>
+                <a href="#cuowuyuanyintishi"><li class="withripple">错误原因提示（等级2/等级3）</li></a>
+                <a href="#cuowuxiugaijianyi"><li class="withripple">错误修改建议（等级3）</li></a>
+                <a href="#cuowuyufang"><li class="withripple">错误预防（等级3）</li></a>
+                <a href="#kelijiexing"><li class="withripple"><strong class="font-large">可理解性</strong></li></a>
+                <a href="#bangzhuxinxi"><li class="withripple">帮助信息（等级2）</li></a>
+                <a href="#zhanneisousuogongnenghewangzhanditu"><li class="withripple">站内搜索功能和网站地图（等级3）</li></a>
+                <a href="#jianrongxing"><li class="withripple"><strong class="font-large">兼容性</strong></li></a>
+                <a href="#wuzhangailiulanfuzhufangshi"><li class="withripple">无障碍浏览辅助方式（等级1）</li></a>
+                <a href="#wuzhangailiulanfuzhufangshilianjieweizhi"><li class="withripple">无障碍浏览辅助方式链接位置（等级1）</li></a>
+                <a href="#wuzhangailiulanfuzhufangshilianjiexingshi"><li class="withripple">无障碍浏览辅助方式链接形式（等级1）</li></a>
+                <a href="#yonghujiaohujianrongxing"><li class="withripple">用户交互兼容性（等级1/等级2）</li></a>
+                <a href="#fankuilianluo"><li class="withripple">反馈联络（等级1）</li></a>
+            </ul>
+        </div>
+        <div class="col-md-offset-2 col-md-10 col-xs-offset-3 col-xs-9 col-checkrule" style="padding-left: 15px;" id="checkrule">
+            <hr class="hr-checkrule" style="margin-top: 0;"  id="keganzhixing" >
+            <h3><strong>可感知性</strong></h3>
+
+            <hr class="background-primary hr-checkrule" id="yanzhengma" style="height:3px;">
+            <h4><strong>验证码（等级1/等级2）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义1</strong></p>
+            <p>验证码（等级1）如果网页中存在非文本验证码，则应提供适合多种残疾人和有特殊需求的健全人使用的替代表现形式。</p>
+            <p><strong>补充说明1</strong></p>
+            <p>应能保证视力或听力或说话方面有困难的用户使用，仅有图片验证码不通过。</p>
+            <p><strong>检测方法1</strong></p>
+            <p>查看验证码的形式是否是非文本验证码，如语音验证码，遇到下图只有图片验证码时，即为不符合等级1。</p>
+            <p><img src="/static/img/rule/1.1.1.png" alt="验证码等级1违规样例"></p>
+            <p><strong>定义2</strong></p>
+            <p>验证码（等级2）如果网页中存在非文本验证码，则应提供适合多种残疾人和有特殊需求的健全人使用的不离开当前操作界面的替代表现形式（例如语音验证码）。</p>
+            <p><strong>补充说明2</strong></p>
+            <p>在等级1的基础上，要求不离开当前操作界面，例如用链接跳转去其他页面则本条不通过。</p>
+            <p><strong>检测方法2</strong></p>
+            <p>步骤一：查看验证码是否含有除了图片验证码之外的如语音验证码或短信验证码等形式。若含有，则进入步骤二，否则判定为不通过。</p>
+            <p>步骤二：因为含有非文本验证码，接下来就看其使用方式是否会使用户离开当前的操作页面。若满足上述条件就为通过，否则不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>下图有语音验证码，也就是非文本验证码所以符合等级1，所以等级1通过，进入步骤二，由于是手机获取会导致离开当前页面所以不符合等级2，若是当前网页的语音验证就符合等级2。</p>
+            <p><img src="/static/img/rule/1.1.2.png" alt="验证码等级2违规样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="wenbendaxiaotiaozheng">
+            <h4><strong>文本大小调整（等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>应能无须使用辅助技术即可对网页的字体大小进行调整（字幕文本和图片文本除外），放大程度可达200%，字体放大后的显示结果不超出屏幕的左右边界，且放大后文字不能够相互重叠。</p>
+            <p><strong>补充说明</strong></p>
+            <p>可使用网页浏览器的放大功能。放大后，若屏幕不能一次显示全部内容，但可用滚动条拖动看到全部内容的算通过。</p>
+            <p><strong>检测方法</strong></p>
+            <p>步骤一：先观察原大小的页面，再将其放大至200%。</p>
+            <p>步骤二：先观察其是否页面超出边界，若未超出边界或者超出边界但有滚动条的就进入步骤三否则为不通过。</p>
+            <p>步骤三：观察页面的内容，若果有文字或框架等发生重叠的或超出原来框架的就不通过，否则通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>如下是放大至200%时满足条件的页面，第一张图放大后未超出左右边界，同时虽然超出上下边界却有滚动条，第二张图左右边界和上下边界都超出但是都有滚动条，同时也都满足步骤三的条件所以通过。</p>
+            <p><img src="/static/img/rule/1.5.1.png" alt="文本大小调整（等级3）正确样例1"></p>
+            <p><img src="/static/img/rule/1.5.2.png" alt="文本大小调整（等级3）正确样例2"></p>
+
+            <hr class="background-primary hr-checkrule" id="duomeiti">
+            <h4><strong>多媒体（等级2）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>应为多媒体信息提供内容概要。</p>
+            <p><strong>补充说明</strong></p>
+            <p>此处多媒体暂时只分为视频和Flash。</p>
+            <ul>
+                <li>视频有字幕即算通过，内嵌或文本说明都可以</li>
+                <li>视频并未为所有语音加字幕，如新闻联播的内容概要，或视频下有内容概要，都算通过</li>
+                <li>视频带有手语说明，算通过</li>
+                <li>视频没有语音只有文字或画面，算通过</li>
+                <li>无实质内容的Flash宣传图片，算通过</li>
+                <li>以Flash展现的网页，没有描述音轨，但视力正常者可以阅读的，如Flash电子书，算通过。但Flash有语音却没有字幕的，不通过</li>
+            </ul>
+            <p><strong>检测方法</strong></p>
+            <p>步骤一：查看多媒体是否为视频内容，是则进入步骤二若为Flash则进入步骤三。</p>
+            <p>步骤二：若视频有语音的就查看是否有字幕或者内嵌文本说明来提供内容概要，或者有收于说明等，至少有一个的就算通过否则不通过，若视频没声音也算通过。</p>
+            <p>步骤三：若Flash为宣传图片并无实质内容，算通过。若是Flash展现的网页，没有描述音轨，但视力正常者可以阅读的，如Flash电子书，算通过。但Flash如果有语音就要按步骤二的方法来检测。</p>
+            <p><strong>示例说明</strong></p>
+            <p>如下图所示进入步骤二后发现其包含字幕也有内嵌文本说明来提供内容概要，所以该检测项为通过。</p>
+            <p><img src="/static/img/rule/1.6.1.png" alt="多媒体（等级2）正确样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="yuluduomeiti">
+            <h4><strong>预录多媒体（等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>对于预先录制的多媒体，应提供音视频中语音信息的替代文本，即：提供一个直接嵌入视频流的开放字幕，或提供一个封闭字幕。</p>
+            <p><strong>补充说明</strong></p>
+            <p>在多媒体（等级2）的基础上，需要为全部语音内容加字幕或文字说明，只有概要则不通过。其他等同于多媒体（等级2）。</p>
+            <p><strong>检测方法</strong></p>
+            <p>步骤一：查看多媒体是否为视频内容，是则进入步骤二若为Flash则进入步骤三。</p>
+            <p>步骤二：若视频有语音的就查看是否有字幕或者内嵌文本说明来提供内容概要，或者有收于说明等，至少有一个的就进入步骤四，若视频没声音就算通过。</p>
+            <p>步骤三：若Flash为宣传图片并无实质内容，算通过。若是Flash展现的网页，没有描述音轨，但视力正常者可以阅读的，如Flash电子书，算通过。但Flash如果有语音就要按步骤二的方法来检测。</p>
+            <p>步骤四：若该多媒体内容含有声音，就观察是否为所有语音都配上字幕了，若有则通过，否则不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>下图所示的例子中，视频不仅有概要也为所有语音都加上了字幕所以通过。</p>
+            <p><img src="/static/img/rule/1.7.1.png" alt="预录多媒体（等级3）正确样例"></p>
+
+            <hr class="hr-checkrule" style="margin-top: 0;"  id="kecaozuoxing" >
+            <h3><strong>可操作性</strong></h3>
+            <hr class="background-primary hr-checkrule" id="jianpancaozuo" style="height:3px;">
+            <h4><strong>键盘操作（等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>网页内容中所有可通过鼠标操作实现的功能均可通过键盘操作来实现，而且对单个键击时间没有特定要求（依赖鼠标划过路径实现的功能除外，如鼠标画笔）。</p>
+            <p><strong>补充说明</strong></p>
+            <p>不通过的情况，常见的有两种：</p>
+            <p>一种是键盘tab遍历无法进入某块有实质内容的区域（包括多媒体播放器），或者用鼠标进入某区域后用键盘无法跳出；</p>
+            <p>另一种是鼠标移至菜单上会弹出子菜单（通常是使用了html的mouseover属性），但仅用键盘无法访问到子菜单中的内容（若键盘tab可以遍历所有子菜单则通过）。</p>
+            <p><strong>检测方法</strong></p>
+            <p>步骤一：观察页面中存在的需要用鼠标滑动或点击等访问的子菜单。</p>
+            <p>步骤二：尝试用Tab键访问的那些子菜单或区域等，若可以访问为通过，否则不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>如下图Tab键遍历时可以访问信息公开下的子菜单，所以此例中该项为通过。</p>
+            <p><img src="/static/img/rule/2.1.1.png" alt="键盘操作（等级3）正确样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="jianpanjiaodianxianru">
+            <h4><strong>键盘焦点陷入（等级1/等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义1</strong></p>
+            <p>键盘焦点陷入（等级1）网页应支持键盘焦点进入内容区，不产生键盘焦点陷入。</p>
+            <p><strong>补充说明1</strong></p>
+            <p>键盘焦点陷入是指，用键盘遍历网页元素时，焦点卡住或者在一个小范围内循环无法跳出。本条要求，在进入内容区之前不产生键盘焦点陷入。</p>
+            <p><strong>检测方法1</strong></p>
+            <p>步骤一：用Tab键快速遍历页面查看焦点是否能进入主页面，若能则进入步骤二，否则不通过。</p>
+            <p>步骤二：查看焦点是否在主要页面内容之前循环而无法进入内容区，若能够进入内容区则通过，否则不通过。</p>
+            <p><strong>示例说明1</strong></p>
+            <p>下图的页面检测结果为通过。</p>
+            <p><img src="/static/img/rule/2.2.1.png" alt="键盘焦点陷入（等级1）正确样例"></p>
+            <p><strong>定义2</strong></p>
+            <p>键盘焦点陷入（等级3）如果使用键盘操作能将键盘焦点移到某个页面组件上，则只使用键盘就可以将焦点从该组件上移开；如果除了点击未经更改的方向键、Tab键或使用其它标准退出方式之外还需要其他的操作，则应告知用户移开焦点的方法。</p>
+            <p><strong>补充说明2</strong></p>
+            <p>本条要求，整个网页没有键盘焦点陷入。</p>
+            <p><strong>检测方法2</strong></p>
+            <p>步骤一：用Tab键快速遍历页面查看焦点是否能进入主页面，若能则进入步骤二，否则不通过。</p>
+            <p>步骤二：查看焦点是否在主要页面内容之前循环而无法进入内容区，若能够进入内容区则进入步骤三，否则不通过。</p>
+            <p>步骤三：如果用Tab键可以遍历整个页面都没有发生焦点陷入，并且可以循环遍历整个页面而不会导致只能遍历一次页面而无法再次从头开始遍历的情况，那么此项通过。</p>
+
+            <hr class="background-primary hr-checkrule" id="duomeitibofangkongzhi">
+            <h4><strong>多媒体播放控制（等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>视频、音频、多媒体信息的播放可通过键盘控制，可通过键盘播放、停止、暂停、快进、快退、增减音量。</p>
+            <p><strong>补充说明</strong></p>
+            <p>有很多多媒体播放器，在聚焦之后，是可以通过方向键实现这些操作的。但如果只用键盘无法聚焦到播放器，本项不通过。如果多媒体指向非视音频的flash地图之类的，这项算通过。</p>
+            <p><strong>检测方法</strong></p>
+            <p>步骤一：如果多媒体指向非视音频的flash地图之类的，这项算通过。否则查看只用键盘是否可以无法聚焦到播放器，若可以进入步骤二否则该项不通过。</p>
+            <p>步骤二：尝试用键盘的空格键，方向键等看是否能够控制视频的播放，停止等功能，若能则通过，否则不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>在下图所示的视频中如果只用键盘无法聚焦到播放器，所以该项不通过。即使在聚焦之后，是可以通过方向键实现这些操作的。</p>
+            <p><img src="/static/img/rule/2.3.1.png" alt="多媒体播放控制（等级3）违规样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="tiaoguodaohanglan">
+            <h4><strong>跳过导航栏（等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>应提供一种机制来跳过在多个网页中反复出现的内容块，提供直接访问网页主要内容的功能。</p>
+            <p><strong>补充说明</strong></p>
+            <p>先看有没有无障碍相关的帮助信息，然后看其中是否有可以跳过导航栏的快捷键，最后测试快捷键是否可用。全都没问题才通过。</p>
+            <p><strong>检测方法</strong></p>
+            <p>步骤一：先查看首页是否有无障碍浏览的选项，并找到帮助信息（如图 12 ）。如果不能就不通过。否则进入步骤二。</p>
+            <p>步骤二：找到帮助信息后进入页面快捷配置选项，此时可以看到各个功能的快捷键设置，找到跳过导航栏的快捷键（就是跳到主要内容区域的快捷键）并进入步骤三。若找不到就不通过。</p>
+            <p>步骤三：在首页测试是否能用所找到的快捷键实现该功能，按下快捷键并按Tab看焦点是否跳到主要内容区域，若可以就通过，不可以就不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>经测试在下图页面中，用找到的快捷键可以发现焦点跳到新闻要论部分，说明该快捷键有效地跳过导航栏，所以该项检测结果为通过。</p>
+            <p><img src="/static/img/rule/2.4.1.png" alt="跳过导航栏（等级3）正确样例"></p>
+            <p><img src="/static/img/rule/2.4.2.png" alt="跳过导航栏（等级3）正确样例快捷键帮助文档"></p>
+
+            <hr class="background-primary hr-checkrule" id="bankuaitiaozhuan">
+            <h4><strong>板块跳转（等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>应提供一种机制使用户能够通过键盘操作方式在各内容板块间进行跳转。</p>
+            <p><strong>补充说明</strong></p>
+            <p>先看有没有无障碍相关的帮助信息，然后看其中是否有可以在板块间跳转的快捷键，最后测试快捷键是否可用。全都没问题才通过。</p>
+            <p><strong>检测方法</strong></p>
+            <p>步骤一：先查看首页是否有无障碍浏览的选项，并找到帮助信息。如果不能就不通过。否则进入步骤二。</p>
+            <p>步骤二：找到帮助信息后进入页面快捷配置选项，此时可以看到各个功能的快捷键设置，找到跳过板块跳转的快捷键（就是跳到主要内容区域的快捷键）并进入步骤三。若找不到就不通过。</p>
+            <p>步骤三：在首页测试是否能用快捷键实现该功能。按下快捷键并按Tab看焦点是否可以跳到各个板块，若可以就通过，不可以就不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>经测试在下图页面中，快捷键可以跳到各个板块，说明该快捷键有效，所以该项检测结果为通过。</p>
+            <p><img src="/static/img/rule/2.5.1.png" alt="板块跳转（等级3）正确样例"></p>
+            <p><img src="/static/img/rule/2.5.2.png" alt="板块跳转（等级3）正确样例快捷键帮助文档"></p>
+
+            <hr class="background-primary hr-checkrule" id="chongzucaozuoshijian">
+            <h4><strong>充足操作时间（等级2）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>如果计时不是活动的必要部分或关键要素，且不会导致使用者发生法律承诺或财务交易，则应为用户的操作留下充足时间。</p>
+            <p><strong>补充说明</strong></p>
+            <p>若存在定时自动刷新或者定时自动重定向，直接不通过；不存在的情况下往下判断是否有计时，如果计时存在但不是关键要素则不通过；如果计时是关键要素，则判断是否存在闪现，移动滚动的内容，如果存在该内容且不能停止则不通过；其余情况都算通过。</p>
+            <p><strong>检测方法</strong></p>
+            <p>如果计时是活动的必要部分或关键要素，则在本条限制之外，予以通过。对于滚动图片或通知等，如果焦点移到上面就停止不动，那么通过；如果不能停止的，在消失前可以用一般语速读下来，也算通过(这里约定滚动图片从出现到消失不少于5秒)。</p>
+            <p><img src="/static/img/rule/2.6.1.png" alt="充足操作时间（等级2）正确样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="wupiaofuchuang">
+            <h4><strong>无漂浮窗（等级1）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>网页中不应出现漂浮窗。</p>
+            <p><strong>补充说明</strong></p>
+            <p>有漂浮窗的不通过，没有的通过。</p>
+            <p><strong>检测方法</strong></p>
+            <p>只有不操作时依然漂浮移动的才算漂浮窗，随着拖动滚动条而保持边角位置的算悬浮窗。</p>
+
+            <hr class="background-primary hr-checkrule" id="shurutishi">
+            <h4><strong>输入提示（等级2）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>当内容需要用户输入时，应提供说明。</p>
+            <p><strong>补充说明</strong></p>
+            <p>判断非惯用格式是否提供了格式说明，如果没有提供则不通过，否则算通过。</p>
+            <p><strong>检测方法</strong></p>
+            <p>对于手机、邮箱的格式，认为其是常识，不给出格式建议也通过。需要用非惯用的特定格式输入的情况下，需要说明格式。可以用举例的方式说明格式。文本控件中的初始文字作为格式说明也可以。不是常识，也没有给出格式说明的，不通过。</p>
+            <p><img src="/static/img/rule/2.8.1.png" alt="输入提示（等级2）违规样例"></p>
+            <p><img src="/static/img/rule/2.8.2.png" alt="输入提示（等级2）正确样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="cuowuyuanyintishi">
+            <h4><strong>错误原因提示（等级2/等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义1</strong></p>
+            <p>错误原因提示（等级2）如果输入错误被自动检测出来，则应以文本形式向用户描述错误信息，且错误信息可关闭。</p>
+            <p><strong>检测方法1</strong></p>
+            <p>对于可提交输入的内容，如果是搜索栏或是复选框等不会产生“错误”的内容，则通过。</p>
+            <p>尝试输入错误信息并提交，不能自动检出错误则不通过，错误提示是弹出窗口形式且提示合理则通过。</p>
+            <p><strong>示例说明1</strong></p>
+            <p>下图中电话格式错误，但是不提示错误，不通过。同时在下面的例子中，有一项不通过，则最后也是不通过的。</p>
+            <p><img src="/static/img/rule/2.9.1.png" alt="错误原因提示（等级2）违规样例"></p>
+            <p><img src="/static/img/rule/2.9.2.png" alt="错误原因提示（等级2）正确样例"></p>
+            <p><img src="/static/img/rule/2.9.3.png" alt="错误原因提示（等级2）违规样例2"></p>
+            <p><strong>定义2</strong></p>
+            <p>错误原因提示（等级3）如果输入错误被自动检测出来，则应以文本形式向用户描述错误信息，错误信息可关闭，且用户可选择此后不再提示错误信息。</p>
+            <p><strong>检测方法2</strong></p>
+            <p>满足等级2。错误提示是弹出窗口形式、提示合理且可选择此后不再提示错误信息则通过。</p>
+            <p><strong>示例说明2</strong></p>
+            <p>下图中没有“可选择此后不再提示错误信息”，不通过。</p>
+            <p><img src="/static/img/rule/2.9.4.png" alt="错误原因提示（等级3）违规样例"></p>
+            <p><img src="/static/img/rule/2.9.5.png" alt="错误原因提示（等级3）正确样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="cuowuxiugaijianyi">
+            <h4><strong>错误修改建议（等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>如果一个输入错误被自动检测出，并且修改建议已知，则应以文本形式向用户提供修改建议，且提示信息可关闭。</p>
+            <p><strong>补充说明</strong></p>
+            <p>这里并不要求一定是弹出窗口的形式。</p>
+            <p>对于手机、邮箱的格式，认为其是常识，不给出格式建议也通过。</p>
+            <p>对于“错误信息可关闭”，更正错误后 错误信息就消失也可以。</p>
+            <p><strong>检测方法</strong></p>
+            <p>对于可提交输入的内容，如果是搜索栏或是复选框等不会产生“错误”的内容，则通过；判断其是否需要修改建议，如果不需要则通过，否则尝试输入错误信息并提交；不能自动检出错误则不通过，给出错误修改建议则通过。</p>
+            <p><img src="/static/img/rule/2.10.1.png" alt="错误修改建议（等级3）正确样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="cuowuyufang">
+            <h4><strong>错误预防（等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>对于会导致使用者发生法律承诺或财务交易的网页，应有相应错误预防措施（可回退）。</p>
+            <p><strong>检测方法</strong></p>
+            <p>对于可提交输入的内容，不会导致使用者发生法律承诺或财务交易则通过；判断其是否符合下述条件之一：</p>
+            <ul>
+                <li>提交动作是可逆的；</li>
+                <li>可以对用户输入的数据进行输入错误检查，并且用户有机会纠正数据；</li>
+                <li>在最后完成提交之前，提供一个检查、确认、修改信息的机制。</li>
+            </ul>
+            <p>都不满足则不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>下图一不产生法律承诺或财政交易，通过；下图二对于财务交易等满足3个条件之一的，通过。</p>
+            <p><img src="/static/img/rule/2.11.1.png" alt="错误预防（等级3）正确样例"></p>
+            <p><img src="/static/img/rule/2.11.2.png" alt="错误预防（等级3）正确样例2"></p>
+
+            <hr class="hr-checkrule" style="margin-top: 0;"  id="kelijiexing">
+            <h3><strong>可理解性</strong></h3>
+
+            <hr class="background-primary hr-checkrule" id="bangzhuxinxi" style="height:3px;">
+            <h4><strong>帮助信息（等级2）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>使用快捷键可获得与无障碍浏览相关的帮助信息。</p>
+            <p><strong>补充说明</strong></p>
+            <p>一定要有快捷键。</p>
+            <p><strong>检测方法</strong></p>
+            <p>首先看网站是否有提供帮助信息，若没有则不通过；若有，就看帮助信息里或其他地方是否有提供进入帮助信息的快捷键，若没有则不通过，若有再看该快捷键是否有效，若有效则通过，否则不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>下图一显示网站有帮助文档，并且如下图二所示，所用快捷键能跳转到帮助文档页面，通过。</p>
+            <p>下图三虽然网站显示有帮助信息，但是下图四所示，并没有设置跳转到帮助信息的快捷键，因此不通过。</p>
+            <p><img src="/static/img/rule/3.1.1.png" alt="帮助信息（等级2）正确样例"></p>
+            <p><img src="/static/img/rule/3.1.2.png" alt="帮助信息（等级2）正确样例帮助文档"></p>
+            <p><img src="/static/img/rule/3.1.3.png" alt="帮助信息（等级2）违规样例"></p>
+            <p><img src="/static/img/rule/3.1.4.png" alt="帮助信息（等级2）违规样例帮助信息"></p>
+
+            <hr class="background-primary hr-checkrule" id="zhanneisousuogongnenghewangzhanditu">
+            <h4><strong>站内搜索功能和网站地图（等级3）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>除了某一个网页是一个过程的结果或者一个步骤外，均应提供至少一种方式用以在一组网页中找到该网页，如：可提供站内搜索功能，或提供一个文本形式的网站地图。</p>
+            <p><strong>补充说明</strong></p>
+            <p>站内搜索和网站地图两者至少有一个。</p>
+            <p><strong>检测方法</strong></p>
+            <p>如果网站可提供站内搜索功能，或提供一个文本形式的网站地图，通过，两者都没有，不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>下图一中有网站搜索功能，通过；下图二中有网站地图（名字可以是网站导航等），通过。</p>
+            <p><img src="/static/img/rule/3.2.1.png" alt="站内搜索功能和网站地图（等级3）正确样例"></p>
+            <p><img src="/static/img/rule/3.2.2.png" alt="站内搜索功能和网站地图（等级3）正确样例2"></p>
+
+            <hr class="hr-checkrule" style="margin-top: 0;"  id="jianrongxing">
+            <h3><strong>兼容性</strong></h3>
+
+            <hr class="background-primary hr-checkrule" id="wuzhangailiulanfuzhufangshi" style="height:3px;">
+            <h4><strong>无障碍浏览辅助方式（等级1）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>为老年人、低视力人群提供的无障碍内容版本、语音版、无障碍工具条等浏览辅助方式。</p>
+            <p><strong>补充说明</strong></p>
+            <p>网站需为老年人、低视力人群等提供的无障碍内容版本、语音版、无障碍工具条等浏览辅助方式。</p>
+            <p><strong>检测方法</strong></p>
+            <p>如果网站提供无障碍浏览辅助方式，且出现在网页较为明显的位置则通过，若没有无障碍浏览辅助方式则不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>下图网站提供了无障碍辅助工具，属于无障碍浏览辅助方式，通过。</p>
+            <p><img src="/static/img/rule/4.1.1.png" alt="无障碍浏览辅助方式（等级1）"></p>
+
+            <hr class="background-primary hr-checkrule" id="wuzhangailiulanfuzhufangshilianjieweizhi">
+            <h4><strong>无障碍浏览辅助方式链接位置（等级1）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>如果无障碍浏览辅助方式需要通过普通版本进入，则在普通版本上不符合无障碍要求的内容开始之前提供一个链接。</p>
+            <p><strong>补充说明</strong></p>
+            <p>如果无障碍浏览辅助方式需要通过普通版本进入，则在普通版本上不符合无障碍要求的内容开始之前提供一个链接。</p>
+            <p><strong>检测方法</strong></p>
+            <p>如果网站提供了无障碍浏览辅助方式，且出现在网页较为明显的位置则通过，若没有无障碍浏览辅助方式则不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>下图一中有链接位置，通过。下图二中没有无障碍版本，不通过。</p>
+            <p><img src="/static/img/rule/4.2.1.png" alt="无障碍浏览辅助方式链接位置（等级1）正确样例"></p>
+            <p><img src="/static/img/rule/4.2.2.png" alt="无障碍浏览辅助方式链接位置（等级1）违规样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="wuzhangailiulanfuzhufangshilianjiexingshi">
+            <h4><strong>无障碍浏览辅助方式链接形式（等级1）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>无障碍浏览辅助方式的进入链接应易于发现和使用。</p>
+            <p><strong>补充说明</strong></p>
+            <p>没有无障碍版本的不通过。</p>
+            <p><strong>检测方法</strong></p>
+            <p>如果网站提供了无障碍浏览辅助方式，且出现在网页较为明显的位置则通过，若没有无障碍浏览辅助方式则不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>下图中提供了无障碍浏览辅助方式，且在较为明显的位置，通过。</p>
+            <p><img src="/static/img/rule/4.3.1.png" alt="无障碍浏览辅助方式链接形式（等级1）正确样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="yonghujiaohujianrongxing">
+            <h4><strong>用户交互兼容性（等级1/等级2）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义1</strong></p>
+            <p>用户交互兼容性（等级1）网站预留的联络方式，应支持不同类型人群的使用，帮助用户完成后续的信息交互操作。</p>
+            <p><strong>补充说明1</strong></p>
+            <p>有电子邮箱，通过；有地址，通过；只有固定电话，不通过；只有网上信访，不通过。</p>
+            <p><strong>检测方法1</strong></p>
+            <p>如果网站提供了预留的符合要求的联系方式，则通过，否则，不通过。</p>
+            <p><strong>示例说明1</strong></p>
+            <p>下图网站提供了地址，通过。</p>
+            <p><img src="/static/img/rule/4.4.1.png" alt="用户交互兼容性（等级1）正确样例"></p>
+            <p><strong>定义2</strong></p>
+            <p>用户交互兼容性（等级2）网站预留的联络方式，应支持不同类型人群的使用，帮助用户完成后续的、基于互联网的、即时直接的信息交互操作。</p>
+            <p><strong>补充说明2</strong></p>
+            <p>等级1不通过则本条不通过；有QQ等即时网络通讯手段，通过；有电子邮箱是通过的，电子邮箱可以算作即时的；电子邮箱是仅供特定用途的，比如“投诉，请发送邮件至ccbkf.zh@ccb.com”，也算通过，即只要找到邮箱即可。</p>
+            <p><strong>检测方法2</strong></p>
+            <p>如果网站提供了预留的联络方式，且是支持不同类型人群的使用，基于互联网的、即时直接的信息交互方式，则通过，否则不通过。</p>
+            <p><strong>示例说明2</strong></p>
+            <p>下图一二网站提供了邮箱，是基于互联网的、即时直接的信息交互操作，通过。下图三只提供了电话，没有提供邮箱等基于互联网的交互操作信息，不通过。</p>
+            <p><img src="/static/img/rule/4.4.2.png" alt="用户交互兼容性（等级2）正确样例"></p>
+            <p><img src="/static/img/rule/4.4.3.png" alt="用户交互兼容性（等级2）正确样例"></p>
+            <p><img src="/static/img/rule/4.4.4.png" alt="用户交互兼容性（等级2）违规样例"></p>
+
+            <hr class="background-primary hr-checkrule" id="fankuilianluo">
+            <h4><strong>反馈联络（等级1）</strong></h4>
+            <hr class="background-primary">
+            <p><strong>定义</strong></p>
+            <p>网站应预留联络方式，帮助用户反映网站无障碍使用中出现的问题。</p>
+            <p><strong>补充说明</strong></p>
+            <p>暂时等同于用户交互兼容性等级1；有电子邮箱，通过；有地址，通过；只有固定电话，不通过；只有网上信访，不通过。</p>
+            <p><strong>检测方法</strong></p>
+            <p>暂时等同于用户交互兼容性等级1；如果网站提供了预留的符合要求的联系方式，则通过，否则，不通过。</p>
+            <p><strong>示例说明</strong></p>
+            <p>下图网站提供了地址，通过。</p>
+            <p><img src="/static/img/rule/4.5.1.png" alt="反馈联络（等级1）正确样例"></p>
+
+        </div>
+    </div>
+</div>
+
+{% include "common/footer.html"%}
+</body>
+<script type="text/javascript">
+    //hide the official footer
+    $('footer').hide();
+
+    $('#checkRule').addClass('active');
+
+    //获取navbar高度
+    $(".navbar-toggle").click(function() {
+        console.log($('.navbar').height());
+    });
+
+    $("img").addClass("img-responsive center-block");
+
+    $('.hr-checkrule').waypoint(function(direction) {
+        console.log(this.element.id + direction + ';');
+        var tmpHref = '#' + this.element.id;
+        $('#menuCheckrule a').each(function() {
+            if ($(this).attr("href") == tmpHref) {
+                // console.log($(this).attr("href"));
+                $('.menu-checkrule li').removeClass("menu-active");
+                if (direction == 'down') {
+                    $(this.children).addClass('menu-active');
+                } else if (direction == 'up') {
+                    $(this).prev().children().addClass('menu-active');
+                }
+                return false;//break
+            }
+        });
+    }, {
+        context: document.getElementById('checkrule'),
+        offset: 1
+    });
+
+</script>
+</html>

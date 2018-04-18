@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>网站无障碍系统iframe加载提示</title>
+    {% include "common/head.html"%}
+
+    <style>
+        .align-center{ position: absolute; top: 50%; left: 50%;}
+        .vcenter {display: inline-block; vertical-align: middle; float: none;}
+    </style>
+</head>
+
+<body>
+<div class="align-center" id="main">
+    <div style="text-align: center; margin-left: 20px;" class="vcenter">
+        <h3 style="margin-top: 0; color: #009688;"><strong>网页加载中</strong></h3>
+        <div class="progress progress-striped active">
+            <div class="progress-bar" style="width: 100%"></div>
+        </div>
+        <p>你知道吗：点击右上角网页标题可以查看原网页</p>
+    </div>
+</div>
+
+<script src="/static/js/jquery-2.2.4.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<!-- material -->
+<script src="/static/js/material.min.js"></script>
+<script src="/static/js/ripples.min.js"></script>
+<script>
+    document.getElementById("main").style.marginTop = 0-document.getElementById("main").offsetHeight/2;
+    document.getElementById("main").style.marginLeft = 0-document.getElementById("main").offsetWidth/2;
+</script>
+</body>
+</html>

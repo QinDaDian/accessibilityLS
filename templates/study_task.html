@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>{{host.hostName}}学习任务</title>
+    {% include "common/head.html"%}
+
+    <style type="text/css">
+        /*change the default*/
+        .navbar {
+            margin-bottom: 0;
+        }
+
+        iframe {
+            display: block;       /* iframes are inline by default */
+            border: none;         /* Reset default border */
+            height: 100vh;        /* Viewport-relative units */
+            width: 100vw;
+            /*background:transparent;*/
+            /*考虑到响应式，标题栏的高度应该是变化的，不展开时是64px*/
+            padding:0 0 64px 0 !important;
+        }
+
+        .form-group {
+            margin-top: 0;
+            padding-bottom: 0;
+        }
+
+        .form-control, .radio label {
+            font-size: 14px !important;
+        }
+    </style>
+</head>
+<body style="margin:0;padding:0;overflow:hidden;">
+{% include "common/navbar.html"%}
+
+<!-- 用iframe直接加载网页遇到的问题：
+1.如https://www.zhihu.com/服务器返回头问题，无法正常显示
+2.如http://www.w3school.com.cn/，原网页缩小后就没有横向滚动条，所以嵌入iframe后也没有横线滚动条
+3.如http://www.runoob.com/，原网页为响应式，缩小后自适应，也没有横向滚动条
+4.如http://www.weibo.com/自带蒙版，点击iframe自动跳回原网页
+5.比较正常网页如https://www.baidu.com/，https://www.taobao.com/  -->
+<div style="position: relative">
+    <iframe style="position: absolute;left: 0;top: 0;" class="col-md-10" id="loadingIframe" src="{% url 'learningsystem:loading_iframe' %}"></iframe>
+    <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock" style="position: absolute;left: 0;top: 0;" src="{% url 'learningsystem:test' %}" class="col-md-10 col-xs-9" onload="mainIframeLoaded()">
+        您的浏览器不支持iframe，请更新您的浏览器（推荐使用chrome浏览器）
+    </iframe>
+</div>
+
+<div class="col-md-2 col-xs-3" style="overflow: auto; position: absolute; right: 0; top: 64px; bottom: 10px;">
+    <div style="margin-top: 20px;" class="text-center">
+        <a href="{{ page.url }}" target="_blank">
+            <h4>
+                {% if page.title %}
+                    {{ page.title }}
+                {% else %}
+                    该网页没有标题
+                {% endif %}
+            </h4>
+        </a>
+    </div>
+    <hr style="background: #777; opacity:0.2;">
+    <div>
+        <span class="text-primary">检测规则</span>
+        <div  id="showRuleSpecific" class="togglebutton pull-right" style="display:inline-block;">
+            <label><input type="checkbox"></label>
+        </div>
+        <p style="margin-top: 5px;" class="text-muted">{{ rule.title }}</p>
+    </div>
+    <div id="ruleSpecific" hidden>
+        <div>
+            <span class="text-primary">规则描述</span>
+            <p style="margin-top: 5px;" class="text-muted">{{rule.description}}</p>
+        </div>
+        <div style="margin-top: 10px;">
+            <span class="text-primary">检测方法</span>
+            <p style="margin-top: 5px;" class="text-muted">{{rule.checkMethod}}</p>
+        </div>
+        <div style="margin-top: 10px;">
+            <span class="text-primary">通过条件</span>
+            <p style="margin-top: 5px;" class="text-muted">{{rule.passCondition}}</p>
+        </div>
+    </div>
+    <hr style="background: #777; opacity:0.2;">
+
+    <form role="form" style="margin-bottom: 10px;">
+        <fieldset>
+            <div class="form-group" style="margin-top: 0;" id="checkResult">
+                <p class="control-label  text-primary">检测结果</p>
+                <div class="radio" style="display: inline-block;">
+                    <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="PASS">通过</label>
+                </div>
+                <div class="radio" style="display: inline-block;">
+                    <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="FAIL" checked="">不通过</label>
+                </div>
+                <div class="radio" style="display: inline-block;">
+                    <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="" checked="">不知道</label>
+                </div>
+                <div class="radio" style="display: inline-block;">
+                    <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="" checked="">不存在</label>
+                </div>
+            </div>
+
+            <div id="checkReason" style="margin-bottom: 40px;">
+                <div class="form-group">
+                    <label for="freqAns" class="control-label">常见不通过原因</label>
+                    <div>
+                        <select id="freqAns" class="form-control">
+                            <option>亲自写(自带清空技能)</option>
+                           {% if rule.freqAns %}
+{#                                <c:set var="optionsFreqAns" value="{{fn.split({{rule.freqAns}}, '#F#G#F#')}}" />#}
+{#                                <c:forEach var="optionFreqAns" items="{{optionsFreqAns}}">#}
+{#                                    <option>{{optionFreqAns}}</option>#}
+{#                                </c:forEach>#}
+                           {% endif %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" id="formFailAns">
+                    <label for="failAns" class="control-label">不通过原因</label>
+                    <div>
+                        <textarea class="form-control" rows="3" id="failAns"></textarea>
+                        <span class="help-block">请务必给出不通过的原因</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <button type="button" class="btn btn-raised btn-primary btn-block" id="btnSubmit" style="padding-top:10px; padding-bottom:10px;" >提交</button>
+            </div>
+
+            <div class="form-group text-right" style="margin-top:10px;">
+                <a href="" target="_blank">我要反馈</a>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<input id="itemID" type="hidden" value="{{studyItem.studyItemId}}" />
+
+{% include "common/footer.html"%}
+
+<script type="text/javascript">
+     $('footer').hide();
+
+    $('#studyModel').addClass('active');
+    $('#modalBtn').html('下一个');
+
+    // 规则折叠
+    $('#showRuleSpecific').change(function() {
+        $('#ruleSpecific').slideToggle();
+    });
+    //不通过原因折叠
+    $('#checkResult').change(function() {
+        $('#checkReason').slideToggle();
+    });
+
+    //常用不通过原因处理
+    $('#freqAns').change(function() {
+        if($('#freqAns').get(0).selectedIndex == 0) {
+            $('#failAns').val('');
+            $('#formFailAns').addClass('is-empty');
+        } else {
+            $('#failAns').val($('#freqAns option:selected').text());
+            $('#formFailAns').removeClass('is-empty');
+        }
+        $('#failAns').focus();
+    });
+
+    //主iframe加载完成时将加载信息隐藏
+    function mainIframeLoaded() {
+        document.getElementById('loadingIframe').style.display = 'none';
+    }
+
+    $('#btnSubmit').click(function() {
+        var resultMsg = null;
+         var checkResult = $('input:radio[name="radioCheckResult"]:checked').val();
+        if(checkResult == 'FAIL') {
+            if(!$.trim($('#failAns').val())) {
+                showModal('错误提示', '请给出不通过的的原因', '#failAns');
+            } else {
+                //提交不通过结果&不通过原因
+                resultMsg = '您的结果为：不通过；因为' +
+                        $.trim($('#failAns').val()) +
+                        '<br \/>' + getRealResult(0);
+                showModalWithSubBtn('结果提示', resultMsg, '退出', '');
+            }
+        } else {
+            //通过结果
+            resultMsg = '您的结果为：通过<br \/>' + getRealResult(1);
+            showModalWithSubBtn('结果提示', resultMsg, '退出', '');
+        }
+    });
+
+    function getRealResult(userResult) {
+        var realResult = null;
+        if(getStudyItemResult() == userResult) {
+            realResult = '恭喜！';
+        } else {
+            realResult = '抱歉。';
+        }
+
+        {#if({{studyItem.result}} == 1) {#}
+        {#    realResult += '实际结果为：通过；';#}
+        {# }else if({{studyItem.result}} == 0) {#}
+        {#    realResult += '实际结果为：不通过；';#}
+        {# }#}
+        {##}
+        {#if({{studyItem.info}}==null){#}
+        {# realResult += '暂无原因<br \/>';#}
+        {# }else {#}
+        {#    realResult += '{{studyItem.info}}<br \/>';#}
+        {# }#}
+        return realResult;
+    }
+
+    function getStudyItemResult() {
+        return {{studyItem.result}};
+    }
+
+    $(function() {
+        $('#modalSubBtn').click(function(){
+            window.location='${AppContext}study/keganzhixing';//跳转到学习列表，但是不能调回原规则对应的页面，待改进
+        });
+
+        $('#modalBtn').click(function(){
+            //            alert('下一个');
+            var id = $('#itemID').val();
+            window.location='${AppContext}study/getNext/' + id;
+        });
+     })
+</script>
+</body>
+</html>

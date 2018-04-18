@@ -1,0 +1,145 @@
+/* customized styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body,h1,h2,h3,h4,h5,h6,pre {
+  /*font*/
+  font-family: "ff-tisa-web-pro-1","ff-tisa-web-pro-2","Lucida Grande",
+  "Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3",
+  "Microsoft YaHei UI","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+}
+body {
+  /*footer*/
+  margin-bottom: 100px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+}
+.footer-font {
+  margin: 60px 0 20px 0;
+}
+
+/*cover the default model effect*/
+/*.hide-a-effect:visited, .hide-a-effect:active*/
+.hide-a-effect:hover, .hide-a-effect:link {
+  background-color: #009688 !important;
+}
+
+/*make center*/
+.cus-center-container {
+  /*border: solid 1px #000; */
+  display: table;
+}
+.cus-center-content {
+  /*border: solid 1px #000; */
+  display: table-cell  !important;
+  vertical-align: middle;
+}
+
+.color-primary {
+  color: #009688 !important;
+}
+
+.background-primary {
+  background: #009688 !important;
+}
+
+/*summer add*/
+.circle-avatar{
+  /* make it responsive */
+  max-width: 100%;
+  width:100%;
+  height:auto;
+  display:block;
+  /* div height to be the same as width*/
+  padding-top:100%;
+
+  /* make it a cirkle */
+  border-radius:50%;
+
+  /* Centering on image`s center*/
+  background-position-y: center;
+  background-position-x: center;
+  background-repeat: no-repeat;
+
+  /* it makes the clue thing, takes smaller dimention to fill div */
+  background-size: cover;
+
+  /* it is optional, for making this div centered in parent*/
+  margin: 0 auto;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/*table*/
+/*td内容过多时省略，缺点是无法responsive*/
+.ellipsis-table {
+  width: 100%;
+  table-layout: fixed;
+}
+/*内容居中*/
+.ellipsis-table th, .ellipsis-table td {
+  text-align:center;
+  vertical-align:middle;
+}
+.ellipsis-table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pagination {
+  margin: 0;
+}
+.dataTables_length, .dataTables_filter {
+  margin-top: 20px;
+  padding-bottom: 0;
+}
+.dataTables_length select {
+  width: auto !important;
+}
+
+/*navbar material-icons*/
+.navbar .material-icons {
+  font-size: 18px;
+}
+
+/*bootstrap-material-datetimepicker*/
+.dtp-buttons, .dtp-picker {
+  padding-bottom: 0 !important;
+}
+.dtp-buttons {
+  text-align: center !important;
+}
+/*change datetimepicker default color to the main color*/
+/*#8BC34A to #009688, #689F38 to #007966*/
+.dtp-header{
+    background: #007966 !important;
+}
+.p10 > a {
+    color: #007966 !important;
+}
+.dtp-date, .dtp-picker a.selected {
+    background: #009688 !important;
+}
+.dtp-close {
+    top: 2.5px !important;
+}
+.dtp-date .p10 {
+    padding-top: 4px;
+}
+
+/*vertically center*/
+.vcenter {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}

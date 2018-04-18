@@ -1,0 +1,21 @@
+* {
+    background-color: blue !important;
+    font-size: 1.05em !important;
+    color: yellow !important;
+}
+
+.ripple-container {
+    background-color: transparent !important;
+}
+
+.checkbox input[type=checkbox]:checked+.checkbox-material .check, label.checkbox-inline input[type=checkbox]:checked+.checkbox-material .check {
+    border-color: yellow;
+}
+
+.checkbox .checkbox-material .check, label.checkbox-inline .checkbox-material .check {
+    border: 2px solid yellow;
+}
+
+.checkbox input[type=checkbox]:checked+.checkbox-material .check:before, label.checkbox-inline input[type=checkbox]:checked+.checkbox-material .check:before {
+    color: yellow;
+}

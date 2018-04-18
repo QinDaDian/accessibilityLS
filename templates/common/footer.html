@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+    </body>
+    <footer class="footer">
+        <div class="container">
+            <ul class="pull-right footer-font list-unstyled list-inline">
+{#                <%--<li><a href="http://www.zju.edu.cn/" target="_blank">浙江大学</a></li>--%>#}
+{#                <%--<li>|</li>--%>#}
+{#                <%--<li><a href="http://www.cs.zju.edu.cn/" target="_blank">浙江大学计算机学院</a></li>--%>#}
+                <li><a href="mailto:eagle402@zju.edu.cn">联系我们</a></li>
+            </ul>
+            <p class="text-muted footer-font">&copy; 2016 中国残疾人信息和无障碍技术研究中心</p>
+        </div>
+    </footer>
+<!--Modals-->
+    <div id="modalCommon" class="modal fade" tabindex="-1" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 id="modalTitle" class="modal-title">错误提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="modalInfo">具体错误信息</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:void(0)" class="btn btn-primary" data-dismiss="modal">关闭</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modalWithSubBtn" class="modal fade" tabindex="-1" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 id="modalWithSubBtnTitle" class="modal-title">错误提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="modalWithSubBtnInfo">具体错误信息</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:void(0)" class="btn btn-default" style="margin-bottom:0;" id="modalSubBtn" data-dismiss="modal">确认</a>
+                    <a href="javascript:void(0)" class="btn btn-primary" data-dismiss="modal" id="modalBtn">关闭</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>
+<!-- javascript -->
+<script src="/static/js/jquery-2.2.4.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<!-- DataTables -->
+<script src="/static/js/jquery.dataTables.min.js"></script>
+<script src="/static/js/dataTables.bootstrap.min.js"></script>
+<!-- material -->
+<script src="/static/js/material.min.js"></script>
+<script src="/static/js/ripples.min.js"></script>
+{#<%--star rating--%>#}
+<script src="/static/js/star-rating.min.js"></script>
+<script src="/static/js/krajee-fa-theme.min.js"></script>
+<script src="/static/js/star-rating-zh.js"></script>
+<!-- datepicker -->
+<script src="/static/js/moment-with-locales.min.js"></script>
+<script src="/static/js/bootstrap-material-datetimepicker.js"></script>
+<!-- validation -->
+<script src="/static/js/bootstrap-formhelpers.min.js"></script>
+{#<%--waypoints--%>#}
+<script src="/static/js/jquery.waypoints.min.js"></script>
+
+<script src="/static/js/common.js"></script>
+
+<script>
+    //由于要使用全局变量AppContext，所以将该配置放到公共jsp-footer中
+    $.ajaxSetup({
+        contentType : 'application/json;charset=UTF-8',
+        dataType : 'json',
+        error : function (jqXHR, textStatus) {//errorThrown
+            if(textStatus=="parsererror"){//"parsererror"（解析错误）
+                showModal("错误提示", "无效操作！请重新登录！", '', 'none','');
+                $('#modalCommon').on('hidden.bs.modal', function () {
+                  //  window.location="${AppContext}login";
+                });
+            } else {//"timeout"（超时）, "error"（错误）, "abort"(中止), 空
+                showModal("错误提示", "请求超时！请稍后再试！", '', 'none','');
+            }
+        }
+    });
+</script>

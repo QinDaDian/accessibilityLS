@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>网站无障碍学习系统首页</title>
+    {% include "common/head.html"%}
+
+    <style type="text/css">
+        .row-action-primary i {
+            background: transparent !important;
+            border: solid 2px #009688;
+            line-height: 52px !important;
+        }
+        .row-content a {
+            min-width: 20px !important;
+            width: 20px !important;
+            height: 20px !important;
+        }
+
+        .row-action-primary {
+            padding-right: 25px !important;
+        }
+
+    </style>
+</head>
+<body>
+{% include "common/navbar.html" %}
+
+<div class="container">
+        <div class="row well" style="margin-top:10%;">
+            <div class="cus-center-container" style="margin-left:16px; margin-top: -47px; margin-bottom: 28px;">
+                <a href="javascript:void(0)" class="btn btn-primary btn-fab hide-a-effect"><i class="material-icons">person</i><div class="ripple-container"></div></a>
+                <span class="cus-center-content color-primary" style="padding-left: 16px; font-size: 28px;">欢迎光临</span>
+            </div>
+            <div class="list-group" style="margin:10px 0;">
+                <div class="list-group-item cus-center-container">
+                    <div class="row-action-primary cus-center-content">
+                        <i class="material-icons color-primary">photo_camera</i>
+                    </div>
+                    <div class="row-content cus-center-content">
+{#                        <p class="list-group-item-heading"><span>{{currentUserInfo.nickname}}</span></p>#}
+{#                        <p class="list-group-item-text">{{currentUserInfo.sign}}</p>#}
+                    </div>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+
+{% include "common/footer.html"%}
+
+<script type="text/javascript">
+    $('#homepage').addClass('active');
+</script>
+</body>
+</html>
