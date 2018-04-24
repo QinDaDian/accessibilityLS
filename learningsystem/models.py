@@ -20,6 +20,10 @@ class Record(BaseModel):
         (0, '用户答案与标答不一致'),
         (1, '用户答案与标答一致')
     )
+    REASON_TAG = (
+        (0, '手动填写'),
+        (1, '自动获取')
+    )
     record_id = models.IntegerField('学习记录id', primary_key=True, auto_created=True)
     item_id = models.IntegerField('学习项id')
     rule_id = models.IntegerField('规则id')
@@ -28,3 +32,4 @@ class Record(BaseModel):
     std_result = models.IntegerField('标准答案', choices=RESULT)
     judge = models.IntegerField('用户答案判断', choices=JUDGE)
     reason = models.TextField('用户给出的理由')
+    reason_tag = models.IntegerField('填写理由的方式', choices=REASON_TAG, null=True)

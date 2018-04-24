@@ -33,6 +33,7 @@ class Rule(BaseModel):
     description = models.TextField('规则说明')
     check_method = models.TextField('检测方法说明')
     pass_condition = models.TextField('通过条件说明')
+    freq_ans = models.TextField('不通过的常规答案', null=True)
 
 
 class Page(BaseModel):
@@ -43,6 +44,8 @@ class Page(BaseModel):
     depth = models.IntegerField('网页所在层数')
     title = models.CharField('网页标题', max_length=255)
     encode = models.CharField('网页编码', max_length=16)
+    x_frame_options = models.CharField('iframe加载问题', max_length=255, default="")
+
 
 
 
