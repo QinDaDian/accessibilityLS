@@ -38,12 +38,12 @@ class Rule(BaseModel):
 class Page(BaseModel):
     page_id = models.AutoField('网页id', primary_key=True)
     host_id = models.IntegerField('网站id')
-    local_dir = models.CharField('本地地址', max_length=255, null=True)
+    local_dir = models.CharField('本地地址', max_length=255, null=True, blank=True)
     url = models.CharField('url', max_length=4096)
     depth = models.IntegerField('网页所在层数')
     title = models.CharField('网页标题', max_length=255)
     encode = models.CharField('网页编码', max_length=16)
-    x_frame_options = models.CharField('iframe加载问题', max_length=255, null=True)
+    x_frame_options = models.CharField('iframe加载问题', max_length=255, null=True, blank=True)
 
 
 
