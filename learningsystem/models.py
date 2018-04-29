@@ -5,7 +5,7 @@ from accessibilityLS.baseModel import BaseModel
 
 # Create your models here.
 class Item(BaseModel):
-    item_id = models.IntegerField('学习项id', primary_key=True, auto_created=True)
+    item_id = models.AutoField('学习项id', primary_key=True)
     page_id = models.IntegerField('网页id')
 
 
@@ -24,7 +24,7 @@ class Record(BaseModel):
         (0, '手动填写'),
         (1, '自动获取')
     )
-    record_id = models.IntegerField('学习记录id', primary_key=True, auto_created=True)
+    record_id = models.AutoField('学习记录id', primary_key=True)
     item_id = models.IntegerField('学习项id')
     rule_id = models.IntegerField('规则id')
     user_id = models.IntegerField('用户id')
