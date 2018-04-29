@@ -6,6 +6,8 @@ app_name = 'learningsystem'
 urlpatterns = [
     path('ruleList/', views.ruleList, name='ruleList'),
     path('studyIndex/', views.study, name='study'),
-    path('study/loading_iframe/', views.loading_iframe, name='loading_iframe'),
-    path('study/test/', views.loading_iframe, name='test'),
+    path('loading_iframe/', views.loading_iframe, name='loading_iframe'),
+    path('test/', views.test, name='test'),
+    path('mockExam/', views.mockExam, name='mockExam'),
+
 ]

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>网站无障碍检测能力水平测试</title>
+     {% include "common/head.html"%}
+    <style type="text/css">
+        /*change the default*/
+        .navbar {
+            margin-bottom: 0;
+        }
+
+        iframe {
+            display: block; /* iframes are inline by default */
+            border: none; /* Reset default border */
+            height: 100vh; /* Viewport-relative units */
+            width: 100vw;
+            /*background:transparent;*/
+            /*考虑到响应式，标题栏的高度应该是变化的，不展开时是64px*/
+            padding: 0 0 64px 0 !important;
+        }
+
+        .form-group {
+            margin-top: 0;
+            padding-bottom: 0;
+        }
+
+        .form-control, .radio label {
+            font-size: 14px !important;
+        }
+
+    </style>
+</head>
+<body style="margin:0;padding:0;overflow:hidden;">
+{% include "common/navbar.html"%}
+<div style="position: relative">
+     <iframe style="position: absolute;left: 0;top: 0;" class="col-md-8" id="loadingIframe" src="{% url 'learningsystem:loading_iframe' %}"></iframe>
+    <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"
+            style="position: absolute;left: 0;top: 0;" src="{{pageUrl}}" class="col-md-8 col-xs-7"
+            onload="mainIframeLoaded()">
+        您的浏览器不支持iframe，请更新您的浏览器（推荐使用chrome浏览器）
+    </iframe>
+</div>
+
+<div class="col-md-4 col-xs-5" style="overflow: auto; position: absolute; right: 0; top: 64px; bottom: 10px;">
+   <div style="margin-top: 20px;" class="text-center">
+        <a href="{{ page.url }}" target="_blank">
+            <h4>
+             【{{question.questionNumber}}/{{examination.questionNum}}】
+                {% if page.title %}
+                    {{ page.title }}
+                {% else %}
+                    该网页没有标题
+                {% endif %}
+            </h4>
+        </a>
+        <p><span id="countdown">00:00:00</span></p>
+    </div>
+    <hr style="background: #777; opacity:0.2;">
+    <div style="display: inline-block">
+        <div id='item' style="width: 40%;float: left;">
+            <ul class="nav nav-pills nav-stacked text-left" style="background: #cddfe8" >
+                <li class="active text-primary text-center" ><strong>规则条目</strong></li>
+                <hr style="background: #777; opacity:0.2;">
+                {#     {% for rule in rulelist %}#}
+                <li><a href="#" onclick ="changeFrom();return false" id="{{ rule.ruleid }}" >验证码（等级2）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                <li><a href="#" id=""> 验证码（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                <li><a href="#" >非文本链接（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                <li><a href="#" >无障碍内容版本链接位置（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+            </ul>
+        </div>
+        <div id='record' style="width: 55%;float: right">
+            <div>
+                <span class="text-primary">检测规则</span>
+                <div  id="showRuleSpecific" class="togglebutton pull-right" style="display:inline-block;">
+                    <label><input type="checkbox"></label>
+                </div>
+                <p style="margin-top: 5px;" class="text-muted" id="title">{{ rule.title }}</p>
+            </div>
+            <div id="ruleSpecific" hidden>
+                <div>
+                    <span class="text-primary">规则描述</span>
+                    <p style="margin-top: 5px;" class="text-muted" id="description">{{rule.description}}</p>
+                </div>
+                <div style="margin-top: 10px;">
+                    <span class="text-primary">检测方法</span>
+                    <p style="margin-top: 5px;" class="text-muted" id="checkMethod">{{rule.checkMethod}}</p>
+                </div>
+                <div style="margin-top: 10px;">
+                    <span class="text-primary">通过条件</span>
+                    <p style="margin-top: 5px;" class="text-muted" id="passCondition">{{rule.passCondition}}</p>
+                </div>
+            </div>
+     <hr style="background: #777; opacity:0.2;">
+     <form role="form" style="margin-bottom: 10px;">
+                <fieldset>
+                    <div class="form-group" style="margin-top: 0;" id="checkResult">
+                        <p class="control-label  text-primary">检测结果</p>
+                        <div class="radio" style="display: inline-block;">
+                            <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="1">通过</label>
+                        </div>
+                        <div class="radio" style="display: inline-block;">
+                            <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="0" >不通过</label>
+                        </div>
+                        <div class="radio" style="display: inline-block;">
+                            <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="2" >不存在</label>
+                        </div>
+                    </div>
+                    <div id="checkReason" style="margin-bottom: 40px;" hidden>
+                        <div class="form-group">
+                            <label for="freqAns" class="control-label">常见不通过原因</label>
+                             <div>
+                                <select id="freqAns" class="form-control" placehoder="">
+                                  <option>亲自写(自带清空技能)</option>
+                                  <option>ddddddd</option>
+                                   {% if rule.freqAns %}
+        {#                                <c:set var="optionsFreqAns" value="{{fn.split({{rule.freqAns}}, '#F#G#F#')}}" />#}
+        {#                                <c:forEach var="optionFreqAns" items="{{optionsFreqAns}}">#}
+        {#                                    <option>{{optionFreqAns}}</option>#}
+        {#                                </c:forEach>#}
+                                   {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="formFailAns">
+                            <label for="failAns" class="control-label">不通过原因</label>
+                            <button type="button" id='autoGetAns' class="btn btn-btn-raised btn-primary  btn-sm" alt="按Enter键结束自动获取">自动获取</button>
+                            <div>
+                                <textarea class="form-control " rows="2" id="failAns" readonly="false"></textarea></div>
+                                <span class="help-block">请务必给出不通过的原因(亲自写或自动获取)</span>
+                        </div>
+                    </div>
+                {% ifequal examination.questionNum question.questionNumber %}
+                    <div class="form-group" style="margin-top: 20px;">
+                        <button type="button" class="btn btn-raised btn-primary btn-block" id="btnSubmit"
+                                onclick="submitExam(true)" style="padding-top:10px; padding-bottom:10px;">交卷
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="form-group" style="margin-top: 20px;">
+                        <button type="button" class="btn btn-raised btn-primary btn-block" id="btnSubmitNext"
+                                onclick="submitExam(false)" style="padding-top:10px; padding-bottom:10px;">下一题
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-raised btn-default btn-block" id="btnSubmitEarly"
+                                onclick="submitExamEarly()" style="padding-top:10px; padding-bottom:10px;">交卷
+                        </button>
+                    </div>
+                {% endifequal %}
+        </fieldset>
+    </form>
+
+    <div style="margin-bottom: 40px;">
+        {% for id in list %}
+            <button id='change{{forloop.counter}}' onclick="changeQuestion({{forloop.counter}});">{{forloop.counter}}</button>
+        {% endfor %}
+    </div>
+</div>
+
+{% include "common/footer.html"%}
+
+<input type="hidden" id="userAnswer" value="${question.userAnswer}"/>
+<input type="hidden" id="userFailReason" value="${question.userFailReason}"/>
+
+<script type="text/javascript">
+    //hide the official footer
+    $('footer').hide();
+     //主iframe加载完成时将加载信息隐藏
+    function mainIframeLoaded() {
+        document.getElementById('loadingIframe').style.display = "none";
+    }
+    var leftSeconds = 3;//3 秒后才能提交
+    var intervalId;
+    $(function () {
+        $("#btnSubmitNext").attr("disabled", true);//设置按钮不可用
+        intervalId = setInterval("CountDown()",1000);//调用倒计时的方法
+    });
+    function CountDown() {//倒计时方法
+        $("#btnSubmitNext").html("请仔细阅题("+leftSeconds+"秒)");
+        if (leftSeconds <= 0) {
+            $("#btnSubmitNext").html("下一题"); //当时间<=0的时候改变按钮的value
+            $("#btnSubmitNext").attr("disabled",false);//如果时间<=0的时候按钮可用
+            clearInterval(intervalId); //取消由 setInterval() 设置的 timeout
+            return;
+        }
+        leftSeconds--;
+    }
+
+    $(function () {
+        //确认提前交卷
+        $('#modalSubBtn').click(function () {
+            //提前交卷
+            submitExamAuto()
+        });
+        $.ajax({
+            type: 'POST',
+            url: '${AppContext}exam/moriarty/${examination.examinationId}',
+            success: function (result) {
+                for (var num in result) {
+                    $('#change' + result[num].toString()).css('color', 'red');
+                }
+            }
+        });
+        var userAnswer = $('#userAnswer').val();
+        var userFailReason = $('#userFailReason').val();
+        if(userAnswer != -1){
+            if(userAnswer == 0){
+                $('#failAns').text(userFailReason);
+                $("#radio1").attr("checked","checked");
+                $("#radio0").attr("checked",false);
+            }else if(userAnswer == 1){
+                $('#checkReason').slideToggle();
+                $("#radio0").attr("checked","checked");
+                $("#radio1").attr("checked",false);
+            }
+        }
+
+    });
+
+    function changeQuestion(id) {
+        window.location.href = '${AppContext}exam/${examination.examinationId}/' + id;
+    }
+
+    // countdown
+    var passTime = 0 // 页面停留时间，单位ms
+    var totalTime = 7200000 // 考试总时长，单位ms，2小时
+    var usedTime = new Date().getTime() - new Date("{{ examination.startTime }}}").getTime() // 已使用时长，从服务器获取，单位ms
+    // 计算倒计时时间，参数单位均为ms
+    function countdownFn() {
+        var leftTime = totalTime - usedTime - passTime
+//            console.log(leftTime)
+        if (leftTime < 0) {
+            showModal("友情提示", "时间已到，考试结束", "")
+            $('#modalCommon').on('hidden.bs.modal', function () {
+                // 自动交卷
+                submitExamAuto()
+            })
+        } else {
+            var hours = Math.floor(leftTime / 3600000)
+            leftTime = leftTime % 3600000
+            var minutes = Math.floor(leftTime / 60000)
+            leftTime = leftTime % 60000
+            var seconds = Math.round(leftTime / 1000)
+            $("#countdown").html(numToStr(hours) + ":" + numToStr(minutes) + ":" + numToStr(seconds))
+            passTime += 1000
+            setTimeout("countdownFn()", 1000)
+        }
+    }
+    countdownFn() // 触发倒计时
+    function numToStr(num) {
+        return num < 10 ? '0' + num : num
+    }
+
+    // 规则折叠
+    $('#showRuleSpecific').change(function () {
+        $('#ruleSpecific').slideToggle();
+    });
+    //不通过原因折叠
+    $('#checkResult').change(function () {
+            var val1=$('input:radio[id="radio0"]:checked').val();
+            var val2=$('input:radio[id="radio1"]:checked').val();
+            var vat = $("#checkReason").is(":hidden");
+            if(val1 == "PASS" && vat == false)
+                $('#checkReason').slideToggle();
+        else if(val2 == "FAIL" && vat == true)
+            $('#checkReason').slideToggle();
+    });
+
+     var lastBlock; //记录上次框出的块
+      //常用不通过原因处理
+    $('#freqAns').change(function() {
+        $(document).off("click");
+        $(lastBlock).removeClass('bg');
+        $('#failAns').attr("placeholder",'');
+        $('#failAns').attr("readOnly",false);
+        if($('#freqAns').get(0).selectedIndex == 0) {  //亲自写
+            $('#failAns').val('');
+            $('#formFailAns').addClass('is-empty');
+        } else{
+            $('#failAns').val($('#freqAns option:selected').text());
+            $('#formFailAns').removeClass('is-empty');
+        }
+          $('#failAns').focus();
+    });
+     $('#autoGetAns').click(function(){
+         $('#failAns').attr("readOnly",true);
+         $('#failAns').attr("placeholder",'按Enter键结束获取');
+         $(document).click(function (e) {
+             if(lastBlock){
+                 $(lastBlock).removeClass('bg');
+             }
+            if($(e.target).attr('id')!='autoGetAns'){
+                 $(e.target).addClass('bg');     // 设置背景色
+                $('#failAns').val($(e.target).attr('id'));
+                lastBlock=$(e.target);
+                console.log(lastBlock.context);
+            }
+         })
+    });
+    document.onkeydown=function (e) {
+          if(e && e.keyCode==13){ // enter 键结束自动获取
+            $(document).off("click");
+         }
+       };
+
+    // 下一题/交卷/提前交卷
+    function submitExam(isEnd) {
+        var checkResult = $('input:radio[name="radioCheckResult"]:checked').val();
+        if (checkResult == 'FAIL') {
+            if (!$.trim($("#failAns").val())) {
+                showModal("错误提示", "请给出不通过的的原因", '#failAns');
+            } else {
+                //提交不通过结果&不通过原因
+                submitNext(0, $.trim($("#failAns").val()), isEnd);
+            }
+        } else {
+            //通过结果
+            submitNext(1, "", isEnd);
+        }
+    }
+
+    // 提前交卷
+    function submitExamEarly() {
+        showModalWithSubBtn("友情提示", "确定要开始提前交卷？", '确定', '');
+    }
+
+    // 自动交卷
+    function submitExamAuto() {
+        var checkResult = $('input:radio[name="radioCheckResult"]:checked').val();
+        if (checkResult == 0) {
+            if (!$.trim($("#failAns").val())) {
+                // 直接结束考试
+                endExam()
+            } else {
+                // 提交不通过结果&不通过原因
+                submitNext(0, $.trim($("#failAns").val()), true);
+            }
+        } else {
+            //通过结果
+            submitNext(1, "", true);
+        }
+    }
+
+    function submitNext(checkResult, failAns, isEnd) {
+        var checkResultInfo = {};
+        var url = ""
+        checkResultInfo["questionId"] = '{{question.questionId}}';
+        checkResultInfo["userAnswer"] = checkResult;
+        checkResultInfo["userFailReason"] = failAns;
+        if (isEnd) {
+            url = '${AppContext}exam/submitend/${examination.examinationId}'
+        } else {
+            url = '${AppContext}exam/submit'
+        }
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: JSON.stringify(checkResultInfo),
+            success: function (result) {
+                if (result.resultStatus == "FAIL") {
+                    showModal("错误提示", result.resultMsg, '');
+                } else if (result.resultStatus == "SUCCESS") {
+                    // 交卷/提前交卷
+                    if (isEnd) {
+                        window.location.href = "${AppContext}exam/result/${examination.examinationId}"
+                    } else {
+                        // 下一题
+                        window.location.href = "${AppContext}exam/${examination.examinationId}/${question.questionNumber+1}";
+                    }
+                }
+            }
+        });
+    }
+
+    // 直接结束考试
+    function endExam() {
+        $.ajax({
+            type: 'POST',
+            url: ' {% url 'end' %}exam/end/${examination.examinationId}',
+            success: function (result) {
+                if (result.resultStatus == "FAIL") {
+                    showModal("错误提示", result.resultMsg, '');
+                } else if (result.resultStatus == "SUCCESS") {
+                    window.location.href = "${AppContext}exam/result/${examination.examinationId}"
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

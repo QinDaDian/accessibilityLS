@@ -18,3 +18,12 @@ def  study(request):
 
 def  loading_iframe(request):
     return render(request, 'iframe.html')
+
+#模拟考试（暂未实现）
+def mockExam(request):
+    list = map(str, range(25))
+    return render(request,'mockExam.html', {'list':list})
+
+
+def  test(request):
+    return render(request, 'www.baidu.com')
