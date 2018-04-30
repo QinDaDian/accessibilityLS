@@ -42,8 +42,8 @@
 4.如http://www.weibo.com/自带蒙版，点击iframe自动跳回原网页
 5.比较正常网页如https://www.baidu.com/，https://www.taobao.com/  -->
 <div style="position: relative">
-    <iframe style="position: absolute;left: 0;top: 0;" class="col-md-8" id="loadingIframe" src="{% url 'learningsystem:loading_iframe' %}"></iframe>
-    <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock" style="position: absolute;left: 0;top: 0;" src="{% url 'learningsystem:test' %}" class="col-md-8 col-xs-7" onload="mainIframeLoaded()">
+    <iframe style="position: absolute;left: 0;top: 0;" class="col-md-8 col-xs-7" id="loadingIframe" src="{% url 'learningsystem:loading_iframe' %}"></iframe>
+    <iframe id='pageiframe' sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock" style="position: absolute;left: 0;top: 0;" src="http://www.sddpf.org.cn/" class="col-md-8 col-xs-7" onload="mainIframeLoaded()">
         您的浏览器不支持iframe，请更新您的浏览器（推荐使用chrome浏览器）
     </iframe>
 </div>
@@ -67,8 +67,8 @@
                 <li class="active text-primary text-center" ><strong>学习条目</strong></li>
                 <hr style="background: #777; opacity:0.2;">
                 {#     {% for rule in rulelist %}#}
-                <li><a href="#" onclick ="changeFrom();return false" id="{{ rule.ruleid }}" >验证码（等级2）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
-                <li><a href="#" id=""> 验证码（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                <li><a href="#" onclick ="changeFrom();return false" id="change" >验证码（等级2）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                <li><a href="#" id="change{{ rule.ruleid }}"> 验证码（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
                 <li><a href="#" >非文本链接（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
                 <li><a href="#" >无障碍内容版本链接位置（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
             </ul>
@@ -104,7 +104,7 @@
                             <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="1">通过</label>
                         </div>
                         <div class="radio" style="display: inline-block;">
-                            <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="0" >不通过</label>
+                            <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="0" checked>不通过</label>
                         </div>
                         <div class="radio" style="display: inline-block;">
                             <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="3" >不知道</label>
@@ -113,7 +113,7 @@
                             <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="2" >不存在</label>
                         </div>
                     </div>
-                    <div id="checkReason" style="margin-bottom: 40px;" hidden>
+                    <div id="checkReason" style="margin-bottom: 40px;" >
                         <div class="form-group">
                             <label for="freqAns" class="control-label">常见不通过原因</label>
                              <div>
@@ -152,7 +152,8 @@
                   </div>
                 </fieldset>
             </form>
-            <input id="itemID" type="hidden" value="{{record_id }}" />
+            <input id="itemID" type="hidden" value="{{item_id}}" />
+            <input id="reasonTag" type="hidden" value="0" />
         </div>
     </div>
     <hr style="background: #777; opacity:0.2;">
@@ -186,6 +187,7 @@
         }
     });
     var lastBlock; //记录上次框出的块
+    var userfailReason;//实际不通过原因
       //常用不通过原因处理
     $('#freqAns').change(function() {
         $(document).off("click");
@@ -193,14 +195,15 @@
         $('#failAns').attr("placeholder",'');
         $('#failAns').attr("readOnly",false);
         if($('#freqAns').get(0).selectedIndex == 0) {  //亲自写
-
             $('#failAns').val('');
             $('#formFailAns').addClass('is-empty');
         } else{
+            userfailReason=$('#freqAns option:selected').text();
             $('#failAns').val($('#freqAns option:selected').text());
             $('#formFailAns').removeClass('is-empty');
         }
           $('#failAns').focus();
+          $('reasonTag').val(0);
     });
 
     $('#autoGetAns').click(function(){
@@ -211,10 +214,11 @@
                  $(lastBlock).removeClass('bg');
              }
             if($(e.target).attr('id')!='autoGetAns'){
-                 $(e.target).addClass('bg');     // 设置背景色
-                $('#failAns').val($(e.target).attr('id'));
+                $(e.target).addClass('bg');     // 设置背景色
+                $('reasonTag').val(1);
+                $('#failAns').val('已获取');
                 lastBlock=$(e.target);
-                console.log(lastBlock.context);
+                userfailReason=$(e.target).context.innerHTML;
             }
          })
     });
@@ -225,19 +229,18 @@
        };
 
     function  showUserResult(userResult) { //用户结果转换
-        if(checkResult == 0) {
+        if(userResult == 0) {
                 $('#userResult').text('不通过');
             } else {
-                if (checkResult == 1) {
+                if (userResult == 1) {
                     $('#userResult').text('通过');
-                } else if (checkResult == 2) {
+                } else if (userResult == 2) {
                     $('#userResult').text('不存在');
-                } else if (checkResult == 3) {
+                } else if (userResult == 3) {
                     $('#userResult').text('不知道');
                 }
             }
     }
-
     function  showStdResult(stdResult) { //标准答案转换
         if(stdResult == 0) {
             $('#stdResult').text('不通过');
@@ -247,33 +250,51 @@
     }
 
     $('#btnSubmit').click(function() {
-        var checkResult = $('input:radio[name="radioCheckResult"]:checked').val();
-        if(!checkResult){
-            showModal('错误提示', '请给出检测结果', '#failAns');
-        }else if(checkResult == 0&&!$.trim($('#failAns').val())) {
+        var checkResultInfo = {};
+        var userResult = parseInt($('input:radio[name="radioCheckResult"]:checked').val());
+        if(userResult == 0&&!$.trim($('#failAns').val())) {
                 showModal('错误提示', '请给出不通过的的原因', '#failAns');
         }else {
-            showUserResult(checkResult);
-            if(checkResult == 0){
-                $('#userReason').text($.trim($('#failAns').val()));
+            checkResultInfo["userResult"] = userResult;
+            checkResultInfo["userFailReason"] = userfailReason;
+            checkResultInfo["reason_tag"] = parseInt($('#reasonTag').val());
+        //    console.log(checkResultInfo);
+            showUserResult(userResult);
+            if(userResult == 0){
+               $('#userReason').text($.trim($('#failAns').val()));
             }else{
                $('#userReason').text('暂无原因');
             }
+            {#$('#change'{{ rule.ruleid }}).css('color', 'red');#}
+            $('#change').css('color', 'red');
             $("input[name='radioCheckResult']").attr('disabled', 'true');
             $('#btnSubmit').attr('disabled', 'true');
             $('#result').slideDown();
+            {#$.ajax({#} //表单提交
+            {#    type: 'POST',#}
+            {#    url: '{% url '' %}',#}
+            {#    data: checkResultInfo,#}
+            {#    async:false,#}
+            {#    success:function (result) {#}
+            {#        result = JSON.parse(result);#}
+            {#        if (result["resultStatus"] == "FAIL") {#}
+            {#         showModal("错误提示", result.resultMsg, '');#}
+            {#        }#}
+            {#    }#}
+            {#}); #}
         }
     });
 
      function changeFrom(){
-           var record_id = $('#itemID').val();
-           $.ajax({
+           var itemID = $('#itemID').val();
+           {#var ruleid={{ rule.ruleid }};#}
+           $.ajax({     //获取学习记录
                 type: 'POST',
-                url: '',
-                data: record_id,
+                {#url: '{% url ''itemID ruleid %}',#}
                 async:false,
                 success:function (result) {
-                    $('#title').text(result.title);
+                    result = JSON.parse(result);
+                    $('#title').text(result.title); //检测规则
                     $('#description').text(result.description);
                     $('#checkMethod').text(result.checkMethod);
                     $('#passCondition').text(result.passCondition);
@@ -282,7 +303,7 @@
                         $('#checkResult').attr('disabled','true');
                         $('#btnSubmit').attr('disabled','true');
                         $('#result').slideDown();
-                        $('#userReason').text(result.userReason);
+                        $('#userReason').text(result.userReason); //检测结果
                         $('#stdReason').text(result.stdReason);
                         showRealResult(result.user_result );
                         showStdResult(result.std_result);
