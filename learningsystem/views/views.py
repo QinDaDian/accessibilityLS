@@ -3,10 +3,14 @@ from django.shortcuts import render
 from page.models import Rule,Page
 from learningsystem.models import Item
 # Create your views here.
-
+from django.db import connection, transaction
 
 def  ruleList(request):
-    rule_list = Rule.objects.order_by('rule_id')
+    # cursor = connection.cursor()
+    # cursor.execute("SELECT * FROM page_rule WHERE baz = %s", [self.baz])
+    # row = cursor.fetchone()
+    # rule_list = Rule.objects.order_by('rule_id')
+    rule_list = Rule.objects.filter(implemented=1)
     context = {
         'rule_list': rule_list,
     }
@@ -19,6 +23,7 @@ def  study(request):
         'page': page,
     }
     return render(request, 'study_task.html', context)
+
 
 
 def  loading_iframe(request):

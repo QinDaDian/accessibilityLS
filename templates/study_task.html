@@ -164,6 +164,9 @@
 
 {% include "common/footer.html"%}
 <script type="text/javascript">
+
+   $(function () {
+    });
      $('footer').hide();
    //主iframe加载完成时将加载信息隐藏
     function mainIframeLoaded() {
@@ -244,8 +247,10 @@
     function  showStdResult(stdResult) { //标准答案转换
         if(stdResult == 0) {
             $('#stdResult').text('不通过');
-        }else if(stdResult == 0){
+        }else if(stdResult == 1){
             $('#stdResult').text('通过');
+        }else if (userResult == 2) {
+            $('#userResult').text('不存在');
         }
     }
 
