@@ -6,7 +6,7 @@ from learningsystem.models import Item
 
 
 def  ruleList(request):
-    rule_list = Rule.objects.order_by('rule_id')
+    rule_list = Rule.objects.filter(implemented = 1)
     context = {
         'rule_list': rule_list,
     }
