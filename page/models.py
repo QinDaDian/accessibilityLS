@@ -28,7 +28,7 @@ class Rule(BaseModel):
     implemented = models.IntegerField('规则是否被实现', choices=IMPLEMENTED)
     level = models.IntegerField('等级')
     type = models.IntegerField('类型', choices=CHECK_TYPE)
-    property = models.CharField('属性', max_length=20)
+    # property = models.CharField('属性', max_length=20)
     difficulty = models.IntegerField('难度等级')
     description = models.TextField('规则说明', null=True)
     check_method = models.TextField('检测方法说明', null=True)
