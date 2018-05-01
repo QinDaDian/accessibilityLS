@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
-from page.models import Rule
+from page.models import Rule,Page
+from learningsystem.models import Item
 # Create your views here.
 
 
@@ -13,11 +14,16 @@ def  ruleList(request):
 
 
 def  study(request):
-    return render(request, 'study_task.html')
+    page = Page.objects.get(pk = 1)
+    context = {
+        'page': page,
+    }
+    return render(request, 'study_task.html', context)
 
 
 def  loading_iframe(request):
     return render(request, 'iframe.html')
+
 
 #模拟考试（暂未实现）
 def mockExam(request):
