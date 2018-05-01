@@ -25,7 +25,7 @@ class Record(BaseModel):
         (1, '自动获取')
     )
     record_id = models.AutoField('学习记录id', primary_key=True)
-    page_id = models.IntegerField('网页id')
+    page_id = models.IntegerField('网页id', null=True)
     rule_id = models.IntegerField('规则id')
     user_id = models.IntegerField('用户id')
     user_result = models.IntegerField('用户答案', choices=RESULT)
