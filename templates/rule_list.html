@@ -98,11 +98,19 @@
          if(ruleIds.length==0) {
              alert("请选择规则！");
          }else {
-             window.location='{% url 'learningsystem:study'%}';
+              location.href ='{% url 'learningsystem:study'%}'
+             {#  $.ajax({#}
+             {#   type: 'POST',#}
+             {#   traditional: true,#}
+             {#   data:JSON.stringify(ruleIds),#}
+             {#   url: '{% url 'learningsystem:study' %}',#}
+             {#   success: function () {#}
+                       {#ruleid = JSON.parse(data);#}
+             {#          location.href ='{% url 'learningsystem:study'%}'#}
+             {#   }#}
+             {#});#}
          }
      });
-
-
 </script>
 </body>
 </html>

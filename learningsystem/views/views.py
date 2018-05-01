@@ -6,10 +6,6 @@ from learningsystem.models import Item
 from django.db import connection, transaction
 
 def  ruleList(request):
-    # cursor = connection.cursor()
-    # cursor.execute("SELECT * FROM page_rule WHERE baz = %s", [self.baz])
-    # row = cursor.fetchone()
-    # rule_list = Rule.objects.order_by('rule_id')
     rule_list = Rule.objects.filter(implemented=1).order_by('rule_id')
     context = {
         'rule_list': rule_list,
@@ -37,3 +33,10 @@ def mockExam(request):
     list = map(str, range(25))
     return render(request,'mockExam.html', {'list':list})
 
+# def test(request):
+#     ruleIds = request.POST.get('ruleIds')
+#     print(ruleIds)
+#     ruleid = ruleIds[0]
+#     return HttpResponse(json.dumps({
+#         "ruleid": ruleid
+#     }))
