@@ -26,11 +26,11 @@
                     <tr>
                         <th rowspan="2">
                             <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
-                                <input type="checkbox" id="checkall" class="checkall" />
+                                <input type="checkbox" id="checkall" name="checkall" checked/>
                                 <span></span>
                             </label>
                         </th>
-                        <th rowspan="4">类型</th>
+                        <th rowspan="4">原则</th>
                         <th rowspan="6">检测点</th>
                         <th rowspan="2">正确数</th>
                         <th rowspan="2">错误数</th>
@@ -39,7 +39,7 @@
                     <tbody>
                         {% for d in rule_list %}
                             <tr>
-                                <td> <input type="checkbox" id="checkbox"/></td>
+                                <td> <input type="checkbox" name="checkchild" id="rule{{d.rule_id}}" value="{{d.rule_id}}" onclick="chooseRule({{d.rule_id}})" checked /></td>
                                 <td>{{ d.property }}</td>
                                 <td>{{ d.title }}</td>
                                 <td>0</td>
@@ -51,17 +51,58 @@
             </div>
         </div>
         <div style="width:100%;display:inline-block;">
-            <a href="{% url 'learningsystem:study'%}" class="btn btn-primary btn-raised btn-lg btn-block" id="beginStudy">开始学习</a>
+            <a href="javascript:"  class="btn btn-primary btn-raised btn-lg btn-block" id="beginStudy">开始学习</a>
         </div>
     </div>
 </div>
 
 {% include "common/footer.html"%}
+
+<script src="/static/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript">
-<script src="/static/js/jquery.dataTables.min.js">
      $(function () {
-       $('#ruleTable').DataTable();
-  });
+       {#$('#ruleTable').DataTable();#}
+       $('input[name="checkchild"]').each(function(){
+             ruleIds.push(parseInt($(this).val()));
+            });
+     });
+
+      window.ruleIds =new Array();
+      $('input[name=checkall]').click(function(event) {   //复选框全选
+        if(this.checked){
+            $('input[name="checkchild"]').each(function(){
+                if(ruleIds.indexOf(parseInt($(this).val()))==-1){
+                    ruleIds.push(parseInt($(this).val()));
+                }
+                this.checked=true;
+            });
+        } else {
+            $('input[name="checkchild"]').each(function(){this.checked=false;});
+        }
+        /*阻止向上冒泡，以防再次触发点击操作*/
+        event.stopPropagation();
+    });
+
+     function chooseRule(ruleid){
+        if($("#rule"+ruleid).is(':checked')) {
+            $("#host" + ruleid).checked = true;
+            ruleIds.push(ruleid);
+        }else{
+            /**单选框取消选中时将它的value移除隐藏域*/
+            var index = ruleIds.indexOf(ruleid);
+            ruleIds.splice(index, 1);
+            $('#checkall').prop("checked",false);
+        }
+    };
+    $('#beginStudy').click(function() {
+         if(ruleIds.length==0) {
+             alert("请选择规则！");
+         }else {
+             window.location='{% url 'learningsystem:study'%}';
+         }
+     });
+
+
 </script>
 </body>
 </html>

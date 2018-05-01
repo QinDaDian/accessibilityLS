@@ -66,14 +66,12 @@
             <ul class="nav nav-pills nav-stacked text-left" style="background: #cddfe8" >
                 <li class="active text-primary text-center" ><strong>学习条目</strong></li>
                 <hr style="background: #777; opacity:0.2;">
-                {#     {% for rule in rulelist %}#}
-                <li><a href="#" onclick ="changeFrom();return false" id="change" >验证码（等级2）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
-                <li><a href="#" id="change{{ rule.ruleid }}"> 验证码（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
-                <li><a href="#" >非文本链接（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
-                <li><a href="#" >无障碍内容版本链接位置（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                {% for r in rule_list %}
+                     <li><a href="#" onclick ="changeFrom();return false" id="change{{ r.rule_id }}" >{{ r.title}}<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                {% endfor %}
             </ul>
         </div>
-        <div id='record' style="width: 55%;float: right">
+        <div id='record' style="width: 55%;float: right" >
             <div>
                 <span class="text-primary">检测规则</span>
                 <div  id="showRuleSpecific" class="togglebutton pull-right" style="display:inline-block;">
@@ -88,11 +86,11 @@
                 </div>
                 <div style="margin-top: 10px;">
                     <span class="text-primary">检测方法</span>
-                    <p style="margin-top: 5px;" class="text-muted" id="checkMethod">{{rule.checkMethod}}</p>
+                    <p style="margin-top: 5px;" class="text-muted" id="checkMethod">{{rule.check_method}}</p>
                 </div>
                 <div style="margin-top: 10px;">
                     <span class="text-primary">通过条件</span>
-                    <p style="margin-top: 5px;" class="text-muted" id="passCondition">{{rule.passCondition}}</p>
+                    <p style="margin-top: 5px;" class="text-muted" id="passCondition">{{rule.pass_condition}}</p>
                 </div>
             </div>
             <hr style="background: #777; opacity:0.2;">
@@ -140,11 +138,8 @@
                    <div id="result" hidden>
                      <p class="text-primary">您的答案：<span class="text-muted" id="userResult"></span></p>
                      <p class="text-primary">您的理由：<span class="text-muted" id="userReason"></span></p>
-                     <p class="text-primary">标准答案：<span class="text-muted" id="stdResult" >hhh</span></p>
-                     <p class="text-primary" id="stdReason">原因：
-                         <span class="text-muted">
-                             hhhhhhhhh
-                         </span>
+                     <p class="text-primary">标准答案：<span class="text-muted" id="stdResult" ></span></p>
+                     <p class="text-primary" >原因：<span class="text-muted" id="stdReason"></span>
                      </p>
                   </div>
                   <div class="form-group">
@@ -181,7 +176,7 @@
     //不通过原因折叠
     $('#checkResult').change(function() {
         var checkResult = $('input:radio[name="radioCheckResult"]:checked').val();
-        if(checkResult==0) {
+        if(checkResult==0||checkResult==1) {
             $('#checkReason').slideDown();
             $('#failAns').attr("readOnly",false);
             $('#failAns').focus();
@@ -221,7 +216,7 @@
                 $('reasonTag').val(1);
                 $('#failAns').val('已获取');
                 lastBlock=$(e.target);
-                userfailReason=$(e.target).context.innerHTML;
+                userReason=$(e.target).context.innerHTML;
             }
          })
     });
@@ -255,17 +250,18 @@
     }
 
     $('#btnSubmit').click(function() {
+        $(document).off("click");
         var checkResultInfo = {};
         var userResult = parseInt($('input:radio[name="radioCheckResult"]:checked').val());
-        if(userResult == 0&&!$.trim($('#failAns').val())) {
-                showModal('错误提示', '请给出不通过的的原因', '#failAns');
+        if((userResult == 0||userResult == 1)&&!$.trim($('#failAns').val())) {
+                showModal('错误提示', '请给出原因', '#failAns');
         }else {
             checkResultInfo["userResult"] = userResult;
-            checkResultInfo["userFailReason"] = userfailReason;
+            checkResultInfo["userReason"] = userReason;
             checkResultInfo["reason_tag"] = parseInt($('#reasonTag').val());
         //    console.log(checkResultInfo);
             showUserResult(userResult);
-            if(userResult == 0){
+            if(userResult == 0||userResult == 1){
                $('#userReason').text($.trim($('#failAns').val()));
             }else{
                $('#userReason').text('暂无原因');

@@ -20,12 +20,13 @@ def  ruleList(request):
 def  study(request):
     page = Page.objects.get(pk = 1)
     rule_list = Rule.objects.filter(implemented=1)[:7]
+    rule = Rule.objects.get(pk = 4)
     context = {
         'page': page,
         'rule_list': rule_list,
+        'rule': rule,
     }
     return render(request, 'study_task.html', context)
-
 
 def  loading_iframe(request):
     return render(request, 'iframe.html')
