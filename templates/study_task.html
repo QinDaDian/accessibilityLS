@@ -3,7 +3,6 @@
 <head>
     <title>{{host.hostName}}学习任务</title>
     {% include "common/head.html"%}
-
     <style type="text/css">
         /*change the default*/
         .navbar {
@@ -43,7 +42,7 @@
 5.比较正常网页如https://www.baidu.com/，https://www.taobao.com/  -->
 <div style="position: relative">
     <iframe style="position: absolute;left: 0;top: 0;" class="col-md-8 col-xs-7" id="loadingIframe" src="{% url 'learningsystem:loading_iframe' %}"></iframe>
-    <iframe id='pageiframe' sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock" style="position: absolute;left: 0;top: 0;" src="http://www.sddpf.org.cn/" class="col-md-8 col-xs-7" onload="mainIframeLoaded()">
+    <iframe id='pageiframe' sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock" style="position: absolute;left: 0;top: 0;" src="{{ page.url }}" class="col-md-8 col-xs-7" onload="mainIframeLoaded()">
         您的浏览器不支持iframe，请更新您的浏览器（推荐使用chrome浏览器）
     </iframe>
 </div>
@@ -67,11 +66,11 @@
                 <li class="active text-primary text-center" ><strong>学习条目</strong></li>
                 <hr style="background: #777; opacity:0.2;">
                 {% for r in rule_list %}
-                     <li><a href="#" onclick ="changeFrom();return false" id="change{{ r.rule_id }}" >{{ r.title}}<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                     <li><a href="#" onclick ="changeFrom({{r.rule_id}});return false" id="change{{ r.rule_id }}" >{{ r.title}}<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
                 {% endfor %}
             </ul>
         </div>
-        <div id='record' style="width: 55%;float: right" >
+        <div id='record' style="width: 55%;float: right;" >
             <div>
                 <span class="text-primary">检测规则</span>
                 <div  id="showRuleSpecific" class="togglebutton pull-right" style="display:inline-block;">
@@ -112,10 +111,10 @@
                         </div>
                     </div>
                     <div id="checkReason" style="margin-bottom: 40px;" >
-                        <div class="form-group">
+                        <div class="form-group" id="freqAnsDiv">
                             <label for="freqAns" class="control-label">常见不通过原因</label>
                              <div>
-                                <select id="freqAns" class="form-control" placehoder="">
+                                <select id="freqAns" class="form-control" >
                                   <option>亲自写(自带清空技能)</option>
                                   <option>ddddddd</option>
                                    {% if rule.freqAns %}
@@ -128,11 +127,31 @@
                             </div>
                         </div>
                         <div class="form-group" id="formFailAns">
-                            <label for="failAns" class="control-label">不通过原因</label>
-                            <button type="button" id='autoGetAns' class="btn btn-btn-raised btn-primary  btn-sm" alt="按Enter键结束自动获取">自动获取</button>
-                            <div>
-                                <textarea class="form-control " rows="2" id="failAns" readonly="false"></textarea></div>
-                                <span class="help-block">请务必给出不通过的原因(亲自写或自动获取)</span>
+                            <label for="failAns" class="control-label">通过/不通过原因</label>
+                                <textarea class="form-control " rows="3" id="failAns" readonly="false"></textarea>
+                        </div>
+                            <span class="help-block">请务必给出通过/不通过的原因</span>
+                         <div id="wrapper">
+                            <div id="container">
+                                <span id="localImag" style="height: 100px; width: 100px" hidden>
+                                    <img id="preview" src="{{record.img}}" width="100" height="100" style="display: block;" />
+                                </span>
+                                 <div class="uploader-list-container">
+                                    <div class="queueList">
+                                        <div id="dndArea" class="placeholder">
+                                            <div id="filePicker-2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="statusBar" style="display:none;">
+                                        <div class="progress"> <span class="text">0%</span> <span class="percentage"></span> </div>
+                                        <div class="btns">
+                                            <div id="filePicker2"></div>
+                                            <div class="uploadBtn">开始上传</div>
+                                        </div>
+                                        <div class="info"></div>
+                                    </div>
+                             </div>
+                            </div>
                         </div>
                     </div>
                    <div id="result" hidden>
@@ -158,14 +177,14 @@
 </div>
 
 {% include "common/footer.html"%}
+<script src="/static/lib/webuploader/0.1.5/webuploader.js"></script>
+<script src="/static/js/fileUpload.js"></script>
 <script type="text/javascript">
 
-   $(function () {
-    });
-     $('footer').hide();
+    $('.footer').hide();
    //主iframe加载完成时将加载信息隐藏
     function mainIframeLoaded() {
-      $('#loadingIframe').css('display', 'none');
+      $('#loadingIframe').css('display','none');
     }
 
     // 规则折叠
@@ -173,30 +192,32 @@
         $('#ruleSpecific').slideToggle();
     });
 
-    //不通过原因折叠
+    //原因折叠
     $('#checkResult').change(function() {
         var checkResult = $('input:radio[name="radioCheckResult"]:checked').val();
         if(checkResult==0||checkResult==1) {
             $('#checkReason').slideDown();
             $('#failAns').attr("readOnly",false);
             $('#failAns').focus();
-        }else{
+            if(checkResult==1){
+               $('#freqAnsDiv').attr("hidden",true);
+            }
+        } else{
             $('#checkReason').slideUp();
         }
     });
-    var lastBlock; //记录上次框出的块
-    var userfailReason;//实际不通过原因
-      //常用不通过原因处理
-    $('#freqAns').change(function() {
-        $(document).off("click");
+    var userReason;//实际不通过原因
+      //常用通过/不通过原因处理
+     var chooseCount; //答案切换次数
+     $('#freqAns').change(function() {
+        chooseCount=chooseCount+1;
         $(lastBlock).removeClass('bg');
-        $('#failAns').attr("placeholder",'');
         $('#failAns').attr("readOnly",false);
         if($('#freqAns').get(0).selectedIndex == 0) {  //亲自写
             $('#failAns').val('');
             $('#formFailAns').addClass('is-empty');
         } else{
-            userfailReason=$('#freqAns option:selected').text();
+            userReason=$('#freqAns option:selected').text();
             $('#failAns').val($('#freqAns option:selected').text());
             $('#formFailAns').removeClass('is-empty');
         }
@@ -204,53 +225,9 @@
           $('reasonTag').val(0);
     });
 
-    $('#autoGetAns').click(function(){
-         $('#failAns').attr("readOnly",true);
-         $('#failAns').attr("placeholder",'按Enter键结束获取');
-         $(document).click(function (e) {
-             if(lastBlock){
-                 $(lastBlock).removeClass('bg');
-             }
-            if($(e.target).attr('id')!='autoGetAns'){
-                $(e.target).addClass('bg');     // 设置背景色
-                $('reasonTag').val(1);
-                $('#failAns').val('已获取');
-                lastBlock=$(e.target);
-                userReason=$(e.target).context.innerHTML;
-            }
-         })
-    });
-    document.onkeydown=function (e) {
-          if(e && e.keyCode==13){ // enter 键结束自动获取
-            $(document).off("click");
-         }
-       };
 
-    function  showUserResult(userResult) { //用户结果转换
-        if(userResult == 0) {
-                $('#userResult').text('不通过');
-            } else {
-                if (userResult == 1) {
-                    $('#userResult').text('通过');
-                } else if (userResult == 2) {
-                    $('#userResult').text('不存在');
-                } else if (userResult == 3) {
-                    $('#userResult').text('不知道');
-                }
-            }
-    }
-    function  showStdResult(stdResult) { //标准答案转换
-        if(stdResult == 0) {
-            $('#stdResult').text('不通过');
-        }else if(stdResult == 1){
-            $('#stdResult').text('通过');
-        }else if (userResult == 2) {
-            $('#userResult').text('不存在');
-        }
-    }
 
     $('#btnSubmit').click(function() {
-        $(document).off("click");
         var checkResultInfo = {};
         var userResult = parseInt($('input:radio[name="radioCheckResult"]:checked').val());
         if((userResult == 0||userResult == 1)&&!$.trim($('#failAns').val())) {
@@ -259,6 +236,7 @@
             checkResultInfo["userResult"] = userResult;
             checkResultInfo["userReason"] = userReason;
             checkResultInfo["reason_tag"] = parseInt($('#reasonTag').val());
+             checkResultInfo["chooseCount"]=chooseCount;
         //    console.log(checkResultInfo);
             showUserResult(userResult);
             if(userResult == 0||userResult == 1){
@@ -266,7 +244,7 @@
             }else{
                $('#userReason').text('暂无原因');
             }
-            {#$('#change'{{ rule.ruleid }}).css('color', 'red');#}
+            $('#change'{{ rule.ruleid }}).css('color', 'red');
             $('#change').css('color', 'red');
             $("input[name='radioCheckResult']").attr('disabled', 'true');
             $('#btnSubmit').attr('disabled', 'true');
@@ -286,9 +264,9 @@
         }
     });
 
-     function changeFrom(){
+     function changeFrom(ruleid){
+           alert(ruleid);
            var itemID = $('#itemID').val();
-           {#var ruleid={{ rule.ruleid }};#}
            $.ajax({     //获取学习记录
                 type: 'POST',
                 {#url: '{% url ''itemID ruleid %}',#}

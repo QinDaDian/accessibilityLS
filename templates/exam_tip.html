@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html>
+<head>
+    <title>网站无障碍检测能力水平测试说明</title>
+    {% include "common/head.html"%}
+</head>
+<body>
+   {% include "common/navbar.html"%}
+    <div class="container" style="margin-top: 80px;">
+        <div class="row well">
+            <div class="cus-center-container" style="margin-left:16px; margin-top: -47px; ">
+                <a href="javascript:void(0)" class="btn btn-primary btn-fab hide-a-effect"><i class="material-icons" disable>bookmark</i><div class="ripple-container"></div></a>
+                <a id="functionTitle" class="cus-center-content color-primary" style="padding-left: 16px; font-size: 28px;" href="{% url 'exam:tip'%}">网站无障碍检测能力水平测试说明</a>
+            </div>
+
+            <div class="col-md-10 col-md-offset-1" style="margin-top: 28px;">
+                <p>1. 考试时长：2小时</p>
+                <p>2. 本次考试共${examination.questionNum}道题，可以提前交卷</p>
+                <p>3. 若未能在有效时间内提交试卷，系统将自动提交试卷</p>
+                <p>4. 端正考风，严肃考纪</p>
+
+                <div class="checkbox" style="margin-top: 20px;">
+                    <label>
+                        <input type="checkbox" id="testTipCheck"> 我已阅读并接受测试规则
+                    </label>
+                </div>
+
+                <fieldset disabled="true" id="btnField"  style="margin-top: 35px;">
+                    <a href="{% url 'exam:exam'%}" id="startTest" class="btn btn-primary btn-lg btn-block btn-raised">开始测试</a>
+{#                  <a href="{% url 'exam: ' examination.examinationId 1 %}" id="startTest" class="btn btn-primary btn-lg btn-block btn-raised">开始测试</a>#}
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+    {% include "common/footer.html"%}
+
+    <script type="text/javascript">
+        $("#testTipCheck").on("change", function() {
+            var btnField = document.getElementById("btnField")
+            if(btnField.disabled) {
+                btnField.disabled = false
+            } else {
+                btnField.disabled = true
+            }
+        })
+    </script>
+</body>
+</html>

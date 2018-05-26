@@ -64,4 +64,31 @@ function removejscssfile(filename, filetype){
     }
 }
 
+//学习/检测页面用户结果转换
+  function  showUserResult(userResult) {
+        if(userResult == 0) {
+                $('#userResult').text('不通过');
+            } else {
+                if (userResult == 1) {
+                    $('#userResult').text('通过');
+                } else if (userResult == 2) {
+                    $('#userResult').text('不存在');
+                } else if (userResult == 3) {
+                    $('#userResult').text('不知道');
+                }
+            }
+    }
+    //学习/检测页面标准答案转换
+  function  showStdResult(stdResult) {
+        if(stdResult == 0) {
+            $('#stdResult').text('不通过');
+        }else if(stdResult == 1){
+            $('#stdResult').text('通过');
+        }else if (stdResult == 2) {
+            $('#stdResult').text('不存在');
+        }
+    }
+
+
+
 

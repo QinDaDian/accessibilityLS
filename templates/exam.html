@@ -33,10 +33,8 @@
 <body style="margin:0;padding:0;overflow:hidden;">
 {% include "common/navbar.html"%}
 <div style="position: relative">
-     <iframe style="position: absolute;left: 0;top: 0;" class="col-md-8" id="loadingIframe" src="{% url 'learningsystem:loading_iframe' %}"></iframe>
-    <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock"
-            style="position: absolute;left: 0;top: 0;" src="{{pageUrl}}" class="col-md-8 col-xs-7"
-            onload="mainIframeLoaded()">
+    <iframe style="position: absolute;left: 0;top: 0;" class="col-md-8 col-xs-7" id="loadingIframe" src="{% url 'learningsystem:loading_iframe' %}"></iframe>
+    <iframe id='pageiframe' sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock" style="position: absolute;left: 0;top: 0;" src="{{ page.url }}" class="col-md-8 col-xs-7" onload="mainIframeLoaded()">
         您的浏览器不支持iframe，请更新您的浏览器（推荐使用chrome浏览器）
     </iframe>
 </div>
@@ -63,9 +61,6 @@
                 <hr style="background: #777; opacity:0.2;">
                 {#     {% for rule in rulelist %}#}
                 <li><a href="#" onclick ="changeFrom();return false" id="{{ rule.ruleid }}" >验证码（等级2）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
-                <li><a href="#" id=""> 验证码（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
-                <li><a href="#" >非文本链接（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
-                <li><a href="#" >无障碍内容版本链接位置（等级1）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
             </ul>
         </div>
         <div id='record' style="width: 55%;float: right">
@@ -105,8 +100,8 @@
                             <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="2" >不存在</label>
                         </div>
                     </div>
-                    <div id="checkReason" style="margin-bottom: 40px;" hidden>
-                        <div class="form-group">
+                        <div id="checkReason" style="margin-bottom: 40px;" >
+                        <div class="form-group" id="freqAnsDiv">
                             <label for="freqAns" class="control-label">常见不通过原因</label>
                              <div>
                                 <select id="freqAns" class="form-control" placehoder="">
@@ -122,13 +117,33 @@
                             </div>
                         </div>
                         <div class="form-group" id="formFailAns">
-                            <label for="failAns" class="control-label">不通过原因</label>
-                            <button type="button" id='autoGetAns' class="btn btn-btn-raised btn-primary  btn-sm" alt="按Enter键结束自动获取">自动获取</button>
-                            <div>
-                                <textarea class="form-control " rows="2" id="failAns" readonly="false"></textarea></div>
-                                <span class="help-block">请务必给出不通过的原因(亲自写或自动获取)</span>
+                            <label for="failAns" class="control-label">通过/不通过原因</label>
+                                <textarea class="form-control " rows="3" id="failAns" readonly="false"></textarea>
                         </div>
-                    </div>
+                            <span class="help-block">请务必给出通过/不通过的原因</span>
+                         <div id="wrapper">
+                            <div id="container">
+                                <span id="localImag" style="height: 100px; width: 100px" hidden>
+                                    <img id="preview" src="{{record.img}}" width="100" height="100" style="display: block;" />
+                                </span>
+                                 <div class="uploader-list-container">
+                                    <div class="queueList">
+                                        <div id="dndArea" class="placeholder">
+                                            <div id="filePicker-2"></div>
+                                        </div>
+                                    </div>
+                                    <div class="statusBar" style="display:none;">
+                                        <div class="progress"> <span class="text">0%</span> <span class="percentage"></span> </div>
+                                        <div class="btns">
+                                            <div id="filePicker2"></div>
+                                            <div class="uploadBtn">开始上传</div>
+                                        </div>
+                                        <div class="info"></div>
+                                    </div>
+                             </div>
+                            </div>
+                        </div>
+                     </div>
                 {% ifequal examination.questionNum question.questionNumber %}
                     <div class="form-group" style="margin-top: 20px;">
                         <button type="button" class="btn btn-raised btn-primary btn-block" id="btnSubmit"
@@ -168,22 +183,6 @@
      //主iframe加载完成时将加载信息隐藏
     function mainIframeLoaded() {
         document.getElementById('loadingIframe').style.display = "none";
-    }
-    var leftSeconds = 3;//3 秒后才能提交
-    var intervalId;
-    $(function () {
-        $("#btnSubmitNext").attr("disabled", true);//设置按钮不可用
-        intervalId = setInterval("CountDown()",1000);//调用倒计时的方法
-    });
-    function CountDown() {//倒计时方法
-        $("#btnSubmitNext").html("请仔细阅题("+leftSeconds+"秒)");
-        if (leftSeconds <= 0) {
-            $("#btnSubmitNext").html("下一题"); //当时间<=0的时候改变按钮的value
-            $("#btnSubmitNext").attr("disabled",false);//如果时间<=0的时候按钮可用
-            clearInterval(intervalId); //取消由 setInterval() 设置的 timeout
-            return;
-        }
-        leftSeconds--;
     }
 
     $(function () {
@@ -266,11 +265,8 @@
             $('#checkReason').slideToggle();
     });
 
-     var lastBlock; //记录上次框出的块
       //常用不通过原因处理
     $('#freqAns').change(function() {
-        $(document).off("click");
-        $(lastBlock).removeClass('bg');
         $('#failAns').attr("placeholder",'');
         $('#failAns').attr("readOnly",false);
         if($('#freqAns').get(0).selectedIndex == 0) {  //亲自写
@@ -284,24 +280,8 @@
     });
      $('#autoGetAns').click(function(){
          $('#failAns').attr("readOnly",true);
-         $('#failAns').attr("placeholder",'按Enter键结束获取');
-         $(document).click(function (e) {
-             if(lastBlock){
-                 $(lastBlock).removeClass('bg');
-             }
-            if($(e.target).attr('id')!='autoGetAns'){
-                 $(e.target).addClass('bg');     // 设置背景色
-                $('#failAns').val($(e.target).attr('id'));
-                lastBlock=$(e.target);
-                console.log(lastBlock.context);
-            }
-         })
+
     });
-    document.onkeydown=function (e) {
-          if(e && e.keyCode==13){ // enter 键结束自动获取
-            $(document).off("click");
-         }
-       };
 
     // 下一题/交卷/提前交卷
     function submitExam(isEnd) {
@@ -376,7 +356,7 @@
     function endExam() {
         $.ajax({
             type: 'POST',
-            url: ' {% url 'end' %}exam/end/${examination.examinationId}',
+            {#url: ' {% url 'end' %}exam/end/${examination.examinationId}',#}
             success: function (result) {
                 if (result.resultStatus == "FAIL") {
                     showModal("错误提示", result.resultMsg, '');

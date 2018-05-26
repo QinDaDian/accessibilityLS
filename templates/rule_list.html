@@ -60,8 +60,7 @@
 
 <script src="/static/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript">
-     $(function () {
-       {#$('#ruleTable').DataTable();#}
+     $(document).ready(function () {
        $('input[name="checkchild"]').each(function(){
              ruleIds.push(parseInt($(this).val()));
             });
@@ -94,21 +93,24 @@
             $('#checkall').prop("checked",false);
         }
     };
+
     $('#beginStudy').click(function() {
          if(ruleIds.length==0) {
              alert("请选择规则！");
          }else {
-              location.href ='{% url 'learningsystem:study'%}'
-             {#  $.ajax({#}
-             {#   type: 'POST',#}
-             {#   traditional: true,#}
-             {#   data:JSON.stringify(ruleIds),#}
-             {#   url: '{% url 'learningsystem:study' %}',#}
-             {#   success: function () {#}
-                       {#ruleid = JSON.parse(data);#}
-             {#          location.href ='{% url 'learningsystem:study'%}'#}
-             {#   }#}
-             {#});#}
+              console.log(ruleIds);
+               $.ajax({
+                type: 'POST',
+                dataType:'JSON',
+                traditional: true,
+                data:JSON.stringify({'ruleIds':ruleIds}),
+                url: '{% url 'learningsystem:getRuleIds' %}',
+                success: function (data) {
+                    if (data == 'sucess') {
+                        location.href ='{% url 'learningsystem:study'%}'
+                    }
+                }
+             });
          }
      });
 </script>

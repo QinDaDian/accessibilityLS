@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>网站无障碍检测能力水平测试结果</title>
+    {% include "common/head.html"%}
+</head>
+<body>
+    {% include "common/navbar.html"%}
+    <div class="container" style="margin-top: 80px;">
+        <div class="row well">
+            <div class="cus-center-container" style="margin-left:16px; margin-top: -47px; ">
+                <a href="javascript:void(0)" class="btn btn-primary btn-fab hide-a-effect"><i class="material-icons" disable>bookmark</i><div class="ripple-container"></div></a>
+                <a id="functionTitle" class="cus-center-content color-primary" style="padding-left: 16px; font-size: 28px;">网站无障碍检测能力水平测试结果</a>
+            </div>
+
+            <div style="margin-top: 50px;">
+                <p>总分：<strong>{{examination.score}}分</strong>／{{examination.questionNum}}题
+                     （<"{{examination.startTime}}" /> - <"{{examination.endTime}}"/>
+               </p>
+                {% for question in questionResultList%}
+                    <div style="border-top: 1px solid #ddd; padding:10px 25px;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>第{{loop.index}}题
+                                    {% ifequal question.questionResult 1 %}
+                                        <span class="text-success">{{question.questionResultMsg}}</span>
+                                    {% else %}
+                                        <span class="text-danger">{{question.questionResultMsg}}</span>
+                                    {% endifequal %}
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>测试规则：{{question.ruleTitle}}</p>
+                                <p>
+                                    {% if question.pageTitle %}
+                                        测试页面：<a href="{{AppContext}study/{{question.studyItemId}}">{{question.pageTitle}}</a>
+                                    {% else %}
+                                        测试页面：<a href="{{question.pageUrl}}">该网页没有标题</a>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p>我的结果：{{question.userAnswerMsg}} {{question.userFailReason}}</p>
+                                <p>参考答案：{{question.questionAnswerMsg}} {{question.questionFailReason}} <a href="#">质疑答案</a></p>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% include "common/footer.html"%}
+    <script type="text/javascript">
+
+    </script>
+</body>
+</html>
