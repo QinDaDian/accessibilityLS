@@ -111,7 +111,7 @@
                             <label style="padding-left: 35px;"><input type="radio"  name="radioCheckResult" value="2" >不存在</label>
                         </div>
                     </div>
-                    <div id="checkReason" style="margin-bottom: 40px;" >
+                    <div id="checkReason" style="margin-bottom: 5px;" >
                         <div class="form-group" >
                             <label for="freqAns" class="control-label">常见原因示例</label>
                              <div>
@@ -181,7 +181,7 @@
 <script src="/static/lib/webuploader/0.1.5/webuploader.js"></script>
 <script src="/static/js/fileUpload.js"></script>
 <script type="text/javascript">
-    window.ruleid=parseInt($('ruleid').val());
+    window.ruleid=parseInt($('#ruleid').val());
     $('.footer').hide();
    //主iframe加载完成时将加载信息隐藏
     function mainIframeLoaded() {
@@ -210,7 +210,7 @@
       //常用通过/不通过原因处理
      $('#freqAns').change(function() {
         if($('#freqAns').get(0).selectedIndex == 0) {  //亲自写
-            $('#failAns').val('');
+            $('#reason').val('');
             $('#formFailAns').addClass('is-empty');
         } else{
             userReason=$('#freqAns option:selected').text();
@@ -239,9 +239,7 @@
             }else{
                $('#userReason').text('暂无原因');
             }
-            $('#change'{{rule.ruleid }}).css('color', 'red');
-            alert( $('#change'{{rule.ruleid }}));
-            $('#change').css('color', 'red');
+            $('#change'+ruleid).css('color', 'red');
             $("input[name='radioCheckResult']").attr('disabled', 'true');
             $('#btnSubmit').attr('disabled', 'true');
             $('#result').slideDown();

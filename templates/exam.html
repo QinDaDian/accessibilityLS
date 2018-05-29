@@ -30,8 +30,10 @@
 
     </style>
 </head>
+
 <body style="margin:0;padding:0;overflow:hidden;">
 {% include "common/navbar.html"%}
+
 <div style="position: relative">
     <iframe style="position: absolute;left: 0;top: 0;" class="col-md-8 col-xs-7" id="loadingIframe" src="{% url 'learningsystem:loading_iframe' %}"></iframe>
     <iframe id='pageiframe' sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-pointer-lock" style="position: absolute;left: 0;top: 0;" src="{{ page.url }}" class="col-md-8 col-xs-7" onload="mainIframeLoaded()">
@@ -59,12 +61,14 @@
             <ul class="nav nav-pills nav-stacked text-left" style="background: #cddfe8" >
                 <li class="active text-primary text-center" ><strong>规则条目</strong></li>
                 <hr style="background: #777; opacity:0.2;">
-                {#     {% for rule in rulelist %}#}
-                <li><a href="#" onclick ="changeFrom();return false" id="{{ rule.ruleid }}" >验证码（等级2）<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                 {% for r in rule_list %}
+                     <li><a href="" onclick ="changeFrom({{r.rule_id}});return false" id="change{{ r.rule_id }}" >{{ r.title}}<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                {% endfor %}
             </ul>
         </div>
-        <div id='record' style="width: 55%;float: right">
+        <div id='record' style="width: 55%;float: right;" >
             <div>
+                <input type="hidden" id="ruleid"  value="{{rule.rule_id}}" />
                 <span class="text-primary">检测规则</span>
                 <div  id="showRuleSpecific" class="togglebutton pull-right" style="display:inline-block;">
                     <label><input type="checkbox"></label>
@@ -78,15 +82,15 @@
                 </div>
                 <div style="margin-top: 10px;">
                     <span class="text-primary">检测方法</span>
-                    <p style="margin-top: 5px;" class="text-muted" id="checkMethod">{{rule.checkMethod}}</p>
+                    <p style="margin-top: 5px;" class="text-muted" id="checkMethod">{{rule.check_method}}</p>
                 </div>
                 <div style="margin-top: 10px;">
                     <span class="text-primary">通过条件</span>
-                    <p style="margin-top: 5px;" class="text-muted" id="passCondition">{{rule.passCondition}}</p>
+                    <p style="margin-top: 5px;" class="text-muted" id="passCondition">{{rule.pass_condition}}</p>
                 </div>
             </div>
-     <hr style="background: #777; opacity:0.2;">
-     <form role="form" style="margin-bottom: 10px;">
+            <hr style="background: #777; opacity:0.2;">
+            <form role="form" style="margin-bottom: 10px;">
                 <fieldset>
                     <div class="form-group" style="margin-top: 0;" id="checkResult">
                         <p class="control-label  text-primary">检测结果</p>
@@ -94,17 +98,17 @@
                             <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="1">通过</label>
                         </div>
                         <div class="radio" style="display: inline-block;">
-                            <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="0" >不通过</label>
+                            <label style="padding-left: 35px;"><input type="radio"  name="radioCheckResult" value="0" checked>不通过</label>
                         </div>
                         <div class="radio" style="display: inline-block;">
-                            <label style="padding-left: 35px;"><input type="radio" name="radioCheckResult" value="2" >不存在</label>
+                            <label style="padding-left: 35px;"><input type="radio"  name="radioCheckResult" value="2" >不存在</label>
                         </div>
                     </div>
-                        <div id="checkReason" style="margin-bottom: 40px;" >
-                        <div class="form-group" id="freqAnsDiv">
-                            <label for="freqAns" class="control-label">常见不通过原因</label>
+                    <div id="checkReason" style="margin-bottom:5px;" >
+                        <div class="form-group" >
+                            <label for="freqAns" class="control-label">常见原因示例</label>
                              <div>
-                                <select id="freqAns" class="form-control" placehoder="">
+                                <select id="freqAns" class="form-control" >
                                   <option>亲自写(自带清空技能)</option>
                                   <option>ddddddd</option>
                                    {% if rule.freqAns %}
@@ -117,14 +121,14 @@
                             </div>
                         </div>
                         <div class="form-group" id="formFailAns">
-                            <label for="failAns" class="control-label">通过/不通过原因</label>
-                                <textarea class="form-control " rows="3" id="failAns" readonly="false"></textarea>
+                            <label for="reason" class="control-label">通过/不通过原因</label>
+                            <textarea class="form-control " rows="3" id="reason"></textarea>
                         </div>
-                            <span class="help-block">请务必给出通过/不通过的原因</span>
+                         <span class="help-block">请务必给出通过/不通过的原因</span>
                          <div id="wrapper">
                             <div id="container">
                                 <span id="localImag" style="height: 100px; width: 100px" hidden>
-                                    <img id="preview" src="{{record.img}}" width="100" height="100" style="display: block;" />
+                                    <img id="preview" src="" width="100" height="100" style="display: block;" />
                                 </span>
                                  <div class="uploader-list-container">
                                     <div class="queueList">
@@ -133,58 +137,57 @@
                                         </div>
                                     </div>
                                     <div class="statusBar" style="display:none;">
-                                        <div class="progress"> <span class="text">0%</span> <span class="percentage"></span> </div>
+                                        <div class="progress"> <span class="text">0%</span> <span class="percentage"></span></div>
                                         <div class="btns">
                                             <div id="filePicker2"></div>
                                             <div class="uploadBtn">开始上传</div>
                                         </div>
                                         <div class="info"></div>
                                     </div>
-                             </div>
+                                </div>
                             </div>
                         </div>
-                     </div>
-                {% ifequal examination.questionNum question.questionNumber %}
-                    <div class="form-group" style="margin-top: 20px;">
-                        <button type="button" class="btn btn-raised btn-primary btn-block" id="btnSubmit"
-                                onclick="submitExam(true)" style="padding-top:10px; padding-bottom:10px;">交卷
-                        </button>
                     </div>
-                {% else %}
-                    <div class="form-group" style="margin-top: 20px;">
-                        <button type="button" class="btn btn-raised btn-primary btn-block" id="btnSubmitNext"
-                                onclick="submitExam(false)" style="padding-top:10px; padding-bottom:10px;">下一题
-                        </button>
-                    </div>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-raised btn-default btn-block" id="btnSubmitEarly"
-                                onclick="submitExamEarly()" style="padding-top:10px; padding-bottom:10px;">交卷
-                        </button>
-                    </div>
-                {% endifequal %}
-        </fieldset>
-    </form>
-
-    <div style="margin-bottom: 40px;">
+            </fieldset>
+         </form>
+      </div>
+    </div>
+     {% ifequal examination.questionNum question.questionNumber %}
+        <div class="form-group" style="margin-top: 20px;">
+            <button type="button" class="btn btn-raised btn-primary btn-block" id="btnSubmit"
+                    onclick="submitExam(true)" style="padding-top:10px; padding-bottom:10px;">交卷
+            </button>
+        </div>
+     {% else %}
+        <div class="form-group" style="margin-top: 20px;">
+            <button type="button" class="btn btn-raised btn-primary btn-block" id="btnSubmitNext"
+                    onclick="submitExam(false)" style="padding-top:10px; padding-bottom:10px;">下一个
+            </button>
+        </div>
+        <div class="form-group">
+            <button type="button" class="btn btn-raised btn-default btn-block" id="btnSubmitEarly"
+                    onclick="submitExamEarly()" style="padding-top:10px; padding-bottom:10px;">交卷
+            </button>
+        </div>
+     {% endifequal %}
+     <div style="margin-bottom: 40px;">
         {% for id in list %}
             <button id='change{{forloop.counter}}' onclick="changeQuestion({{forloop.counter}});">{{forloop.counter}}</button>
         {% endfor %}
-    </div>
+      </div>
 </div>
+<input type="hidden" id="userAnswer" value=""/>
+<input type="hidden" id="userFailReason" value=""/>
 
 {% include "common/footer.html"%}
 
-<input type="hidden" id="userAnswer" value="${question.userAnswer}"/>
-<input type="hidden" id="userFailReason" value="${question.userFailReason}"/>
-
+<script src="/static/lib/webuploader/0.1.5/webuploader.js"></script>
+<script src="/static/js/fileUpload.js"></script>
 <script type="text/javascript">
-    //hide the official footer
-    $('footer').hide();
-     //主iframe加载完成时将加载信息隐藏
-    function mainIframeLoaded() {
-        document.getElementById('loadingIframe').style.display = "none";
-    }
 
+    $('footer').hide();
+
+    window.ruleid=parseInt($('#ruleid').val());
     $(function () {
         //确认提前交卷
         $('#modalSubBtn').click(function () {
@@ -192,47 +195,98 @@
             submitExamAuto()
         });
 
+        {#$.ajax({#}
+            {#type: 'POST',#}
+            {#url: '{% url 'learningsystem:getdone' itemID %}',#}
+            {#success: function (result) {#}
+            {#    for (var id in result) {#}
+            {#        $('#change' + id).css('color', 'red');#}
+
        //显示该检测项第一个条目的结果
         var userAnswer = $('#userAnswer').val();
         var userReason = $('#userReason').val();
-        if(userAnswer != -1){
+        if(userAnswer != ''){
             if(userAnswer == 0||userAnswer == 1){
                 $('#checkReason').slideDown();
                 $('#reason').text(userReason);
-
-            }else{
+            }else if(userAnswer == 2){
                 $('#checkReason').slideUp();
             }
             $(":radio[name='radioCheckResult'][value='" + userAnswer + "']").prop("checked", "checked");
         }
       });
-       $.ajax({
-            type: 'POST',
-            {#url: '{% url 'learningsystem:getdone' itemID %}',#}
-            success: function (result) {
-                for (var ruleid in result) {
-                    $('#change' + ruleid).css('color', 'red');
-                }
-            }
-        });
-        var userAnswer = $('#userAnswer').val();
-        var userFailReason = $('#userFailReason').val();
-        if(userAnswer != -1){
-            if(userAnswer == 0){
-                $('#failAns').text(userFailReason);
-                $("#radio1").attr("checked","checked");
-                $("#radio0").attr("checked",false);
-            }else if(userAnswer == 1){
-                $('#checkReason').slideToggle();
-                $("#radio0").attr("checked","checked");
-                $("#radio1").attr("checked",false);
-            }
-        }
 
+      //主iframe加载完成时将加载信息隐藏
+    function mainIframeLoaded() {
+        document.getElementById('loadingIframe').style.display = "none";
+    }
+       // 规则折叠
+    $('#showRuleSpecific').change(function () {
+        $('#ruleSpecific').slideToggle();
     });
 
+    //答案切换时原因折叠
+    var chooseCount=0; //答案切换次数
+    $('#checkResult').change(function() {
+        chooseCount=chooseCount+1;
+        var checkResult = $('input:radio[name="radioCheckResult"]:checked').val();
+        if(checkResult==0||checkResult==1) {
+            $('#checkReason').slideDown();
+            $('#reason').focus();
+        } else{
+            $('#checkReason').slideUp();
+        }
+    });
+
+     var userReason;//实际不通过原因
+      //常用通过/不通过原因处理
+     $('#freqAns').change(function() {
+        if($('#freqAns').get(0).selectedIndex == 0) {  //亲自写
+            $('#reason').val('');
+            $('#formFailAns').addClass('is-empty');
+        } else{
+            userReason=$('#freqAns option:selected').text();
+            $('#reason').val($('#freqAns option:selected').text());
+            $('#formFailAns').removeClass('is-empty');
+        }
+          $('#reason').focus();
+    });
+
+     //同一个页面检测点切换
+     function changeFrom(ruleid){
+           window.ruleid=ruleid;
+           if((checkResult == 0||checkResult == 1)&&!$.trim($('#reason').val())) {
+                showModal('错误提示', '请给出原因', '#reason');
+           }else {
+               var itemInfo = {};
+               itemInfo["ruleID"] = ruleid;
+               itemInfo["pageID"] = parseInt($("pageID").val());
+               itemInfo["itemID"] = parseInt($("itemID").val());
+               $.ajax({     //获取学习记录
+                   type: 'POST',
+                   data: itemInfo,
+                   {#url: '{% url '' %}',#}
+                   async: false,
+                   success: function (result) {
+                       $('#title').text(result.title); //检测规则
+                       $('#description').text(result.description);
+                       $('#checkMethod').text(result.checkMethod);
+                       $('#passCondition').text(result.passCondition);
+                       if (!result.user_result) {   //显示检测结果
+                           $(":radio[name='radioCheckResult'][value='" + result.user_result + "']").prop("checked", "checked");
+                           $('#userReason').text(result.userReason); //检测结果
+                           $('#result').slideDown();
+                       }
+                   }
+               });
+           }
+       }
+
+     // 不同页面任务切换 返回考试任务相关信息
     function changeQuestion(id) {
-        window.location.href = '${AppContext}exam/${examination.examinationId}/' + id;
+        var url;
+       {# url= '{% url '' examination.examinationId id %}'#}
+        window.location.href = url;
     }
 
     // countdown
@@ -265,52 +319,19 @@
         return num < 10 ? '0' + num : num
     }
 
-    // 规则折叠
-    $('#showRuleSpecific').change(function () {
-        $('#ruleSpecific').slideToggle();
-    });
-    //不通过原因折叠
-    $('#checkResult').change(function () {
-            var val1=$('input:radio[id="radio0"]:checked').val();
-            var val2=$('input:radio[id="radio1"]:checked').val();
-            var vat = $("#checkReason").is(":hidden");
-            if(val1 == "PASS" && vat == false)
-                $('#checkReason').slideToggle();
-        else if(val2 == "FAIL" && vat == true)
-            $('#checkReason').slideToggle();
-    });
-
-      //常用不通过原因处理
-    $('#freqAns').change(function() {
-        $('#failAns').attr("placeholder",'');
-        $('#failAns').attr("readOnly",false);
-        if($('#freqAns').get(0).selectedIndex == 0) {  //亲自写
-            $('#failAns').val('');
-            $('#formFailAns').addClass('is-empty');
-        } else{
-            $('#failAns').val($('#freqAns option:selected').text());
-            $('#formFailAns').removeClass('is-empty');
-        }
-          $('#failAns').focus();
-    });
-     $('#autoGetAns').click(function(){
-         $('#failAns').attr("readOnly",true);
-
-    });
-
     // 下一题/交卷/提前交卷
     function submitExam(isEnd) {
         var checkResult = $('input:radio[name="radioCheckResult"]:checked').val();
-        if (checkResult == 'FAIL') {
-            if (!$.trim($("#failAns").val())) {
-                showModal("错误提示", "请给出不通过的的原因", '#failAns');
-            } else {
-                //提交不通过结果&不通过原因
-                submitNext(0, $.trim($("#failAns").val()), isEnd);
+        if(checkResult == 0||checkResult == 1) {
+            if(!$.trim($('#reason').val())){
+                showModal('错误提示', '请给出原因', '#reason');
+            }else{
+                  //提交不通过结果&不通过原因
+                submitNext(checkResult, $.trim($("#reason").val()), isEnd);
             }
-        } else {
-            //通过结果
-            submitNext(1, "", isEnd);
+        }else{
+            //不存在结果
+            submitNext(checkResult, "", isEnd);
         }
     }
 
@@ -322,30 +343,30 @@
     // 自动交卷
     function submitExamAuto() {
         var checkResult = $('input:radio[name="radioCheckResult"]:checked').val();
-        if (checkResult == 0) {
-            if (!$.trim($("#failAns").val())) {
+        if (checkResult == 0||checkResult == 1) {
+            if (!$.trim($("#reason").val())) {
                 // 直接结束考试
-                endExam()
-            } else {
+                endExam();
+            }else {
                 // 提交不通过结果&不通过原因
-                submitNext(0, $.trim($("#failAns").val()), true);
+                submitNext(checkResult, $.trim($("#reason").val()), true);
             }
-        } else {
+        }else {
             //通过结果
-            submitNext(1, "", true);
+            submitNext(checkResult, "", true);
         }
     }
 
-    function submitNext(checkResult, failAns, isEnd) {
+    function submitNext(checkResult, reason, isEnd) {
         var checkResultInfo = {};
         var url = ""
         checkResultInfo["questionId"] = '{{question.questionId}}';
         checkResultInfo["userAnswer"] = checkResult;
-        checkResultInfo["userFailReason"] = failAns;
+        checkResultInfo["userFailReason"] = reason;
         if (isEnd) {
-            url = '${AppContext}exam/submitend/${examination.examinationId}'
+            {#url = '{% url 'exam:submitend' examination.examinationId %}';#}
         } else {
-            url = '${AppContext}exam/submit'
+            {#url = '{% url 'exam:submit' %}';#}
         }
         $.ajax({
             type: 'POST',
@@ -357,10 +378,10 @@
                 } else if (result.resultStatus == "SUCCESS") {
                     // 交卷/提前交卷
                     if (isEnd) {
-                        window.location.href = "${AppContext}exam/result/${examination.examinationId}"
+                        {#window.location.href = '{% url 'exam:getresult' examination.examinationId %}';#}
                     } else {
                         // 下一题
-                        window.location.href = "${AppContext}exam/${examination.examinationId}/${question.questionNumber+1}";
+                        {#window.location.href = "${AppContext}exam/${examination.examinationId}/${question.questionNumber+1}";#}
                     }
                 }
             }
@@ -371,12 +392,12 @@
     function endExam() {
         $.ajax({
             type: 'POST',
-            {#url: ' {% url 'end' %}exam/end/${examination.examinationId}',#}
+            url: '{% url 'exam:end' examination.examinationId %}',
             success: function (result) {
                 if (result.resultStatus == "FAIL") {
                     showModal("错误提示", result.resultMsg, '');
                 } else if (result.resultStatus == "SUCCESS") {
-                    window.location.href = "${AppContext}exam/result/${examination.examinationId}"
+                    window.location.href = '{% url 'exam:getresult' examination.examinationId %}';
                 }
             }
         });
