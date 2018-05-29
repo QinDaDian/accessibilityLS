@@ -9,5 +9,5 @@ urlpatterns = [
     path('studyIndex/', views.study, name='study'),
     path('loading_iframe/', views.loading_iframe, name='loading_iframe'),
 
-
+    path('submitLearn', views.submitLearn, name='submitLearn')
 ]
