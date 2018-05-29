@@ -3,6 +3,7 @@ import json
 from django.http import  JsonResponse
 from django.shortcuts import render
 
+import random
 from page.models import Rule, Page
 from learningsystem.models import Item, Record
 
@@ -13,21 +14,20 @@ def ruleList(request):
         'rule_list': rule_list,
     }
     return render(request, 'rule_list.html', context)
-
 # 获取用户学习开始前选择的rule
 
 
 def study(request):
-    ruleids=[4,5,6,7,8,9.10]
+    ruleids=[4,5,6,7,8,9,10]
     # 规则筛选
-    items = Item.objects.filter(rule_id__in=ruleids)
-    item = items[0]
-
-    page = Page.objects.filter(page_id=item.page_id)
+    pages = Page.objects.all()
+    print(pages)
+    page = random.sample(list(pages), 1)[0]
+    items = Item.objects.filter(page_id=page.page_id, rule_id__in=ruleids)
     rule_list = Rule.objects.filter(rule_id__in=ruleids)[:7]
     rule = Rule.objects.get(pk=4)
     context = {
-        'item': item,
+        'items': items,
         'page': page,
         'rule_list': rule_list,
         'rule': rule,

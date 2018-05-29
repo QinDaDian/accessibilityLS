@@ -1,6 +1,6 @@
 from django.urls import path
 
-from learningsystem.views import views
+from learningsystem import views
 
 app_name = 'learningsystem'
 urlpatterns = [
