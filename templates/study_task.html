@@ -72,29 +72,29 @@
         </div>
         <div id='record' style="width: 55%;float: right;" >
             <div>
-                <input type="hidden" id="ruleid"  value="{{rule.rule_id}}" />
+                <input type="hidden" id="ruleid"  value="{{rule_list.0.rule_id}}" />
                 <span class="text-primary">检测规则</span>
                 <div  id="showRuleSpecific" class="togglebutton pull-right" style="display:inline-block;">
                     <label><input type="checkbox"></label>
                 </div>
-                <p style="margin-top: 5px;" class="text-muted" id="title">{{ rule.title }}</p>
+                <p style="margin-top: 5px;" class="text-muted" id="title">{{ rule_list.0.title }}</p>
             </div>
             <div id="ruleSpecific" hidden>
                 <div>
                     <span class="text-primary">规则描述</span>
-                    <p style="margin-top: 5px;" class="text-muted" id="description">{{rule.description}}</p>
+                    <p style="margin-top: 5px;" class="text-muted" id="description">{{rule_list.0.description}}</p>
                 </div>
                 <div style="margin-top: 10px;">
                     <span class="text-primary">检测方法</span>
-                    <p style="margin-top: 5px;" class="text-muted" id="checkMethod">{{rule.check_method}}</p>
+                    <p style="margin-top: 5px;" class="text-muted" id="checkMethod">{{rule_list.0.check_method}}</p>
                 </div>
                 <div style="margin-top: 10px;">
                     <span class="text-primary">通过条件</span>
-                    <p style="margin-top: 5px;" class="text-muted" id="passCondition">{{rule.pass_condition}}</p>
+                    <p style="margin-top: 5px;" class="text-muted" id="passCondition">{{rule_list.0.pass_condition}}</p>
                 </div>
             </div>
             <hr style="background: #777; opacity:0.2;">
-            <form role="form" style="margin-bottom: 10px;">
+            <form action="{% url 'learningsystem:submitLearn' %}" method="post" role="form" style="margin-bottom: 10px;" >
                 <fieldset>
                     <div class="form-group" style="margin-top: 0;" id="checkResult">
                         <p class="control-label  text-primary">检测结果</p>
@@ -156,7 +156,7 @@
                         </div>
                     </div>
                   <div class="form-group">
-                        <button type="button" class="btn btn-raised btn-primary btn-block" id="btnSubmit" style="padding-top:10px; padding-bottom:10px;" >确定</button>
+                        <button type="submit" class="btn btn-raised btn-primary btn-block" id="btnSubmit" style="padding-top:10px; padding-bottom:10px;" >确定</button>
                   </div>
                 </fieldset>
            </form>
