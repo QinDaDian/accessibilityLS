@@ -18,19 +18,17 @@ def ruleList(request):
 
 
 def study(request):
-    ruleids=[4,5,6,7,8,9,10]
+    ruleids=request.POST.getlist('checkchild')
     # 规则筛选
     pages = Page.objects.all()
     print(pages)
     page = random.sample(list(pages), 1)[0]
     items = Item.objects.filter(page_id=page.page_id, rule_id__in=ruleids)
     rule_list = Rule.objects.filter(rule_id__in=ruleids)[:7]
-    rule = Rule.objects.get(pk=4)
     context = {
         'items': items,
         'page': page,
         'rule_list': rule_list,
-        'rule': rule,
     }
     return render(request, 'study_task.html', context)
 

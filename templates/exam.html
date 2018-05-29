@@ -392,12 +392,12 @@
     function endExam() {
         $.ajax({
             type: 'POST',
-            url: '{% url 'exam:end' examination.examinationId %}',
+            {#url: '{% url 'exam:end' examination.examinationId %}',#}
             success: function (result) {
                 if (result.resultStatus == "FAIL") {
                     showModal("错误提示", result.resultMsg, '');
                 } else if (result.resultStatus == "SUCCESS") {
-                    window.location.href = '{% url 'exam:getresult' examination.examinationId %}';
+                    {#window.location.href = '{% url 'exam:getresult' examination.examinationId %}';#}
                 }
             }
         });
