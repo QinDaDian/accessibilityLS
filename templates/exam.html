@@ -191,12 +191,27 @@
             //提前交卷
             submitExamAuto()
         });
-        $.ajax({
+
+       //显示该检测项第一个条目的结果
+        var userAnswer = $('#userAnswer').val();
+        var userReason = $('#userReason').val();
+        if(userAnswer != -1){
+            if(userAnswer == 0||userAnswer == 1){
+                $('#checkReason').slideDown();
+                $('#reason').text(userReason);
+
+            }else{
+                $('#checkReason').slideUp();
+            }
+            $(":radio[name='radioCheckResult'][value='" + userAnswer + "']").prop("checked", "checked");
+        }
+      });
+       $.ajax({
             type: 'POST',
-            url: '${AppContext}exam/moriarty/${examination.examinationId}',
+            {#url: '{% url 'learningsystem:getdone' itemID %}',#}
             success: function (result) {
-                for (var num in result) {
-                    $('#change' + result[num].toString()).css('color', 'red');
+                for (var ruleid in result) {
+                    $('#change' + ruleid).css('color', 'red');
                 }
             }
         });

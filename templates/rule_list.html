@@ -15,6 +15,8 @@
 {% include "common/navbar.html" %}
 <div class="container">
     <div class="row well" style="margin-top:10%;">
+      <form action="{% url 'learningsystem:study'%}" method="post">
+        {% csrf_token %}
         <div class="cus-center-container" style="margin-left:16px; margin-top: -47px; ">
             <a href="javascript:void(0)" class="btn btn-primary btn-fab hide-a-effect"><i class="material-icons" disable>bookmark</i><div class="ripple-container"></div></a>
             <a id="functionTitle" class="cus-center-content color-primary" style="padding-left: 16px; font-size: 28px;" href="">选择学习规则</a>
@@ -39,7 +41,7 @@
                     <tbody>
                         {% for d in rule_list %}
                             <tr>
-                                <td> <input type="checkbox" name="checkchild" id="rule{{d.rule_id}}" value="{{d.rule_id}}" onclick="chooseRule({{d.rule_id}})" checked /></td>
+                                <td> <input type="checkbox" name="checkchild" id="rule{{d.rule_id}}" value="{{d.rule_id}}" checked /></td>
                                 <td>{{ d.property }}</td>
                                 <td>{{ d.title }}</td>
                                 <td>0</td>
@@ -51,8 +53,9 @@
             </div>
         </div>
         <div style="width:100%;display:inline-block;">
-            <a href="javascript:"  class="btn btn-primary btn-raised btn-lg btn-block" id="beginStudy">开始学习</a>
+             <input type="submit"  class="btn btn-primary btn-raised btn-lg btn-block" value="开始学习"/>
         </div>
+    </form>
     </div>
 </div>
 
@@ -60,19 +63,9 @@
 
 <script src="/static/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript">
-     $(document).ready(function () {
-       $('input[name="checkchild"]').each(function(){
-             ruleIds.push(parseInt($(this).val()));
-            });
-     });
-
-      window.ruleIds =new Array();
       $('input[name=checkall]').click(function(event) {   //复选框全选
         if(this.checked){
             $('input[name="checkchild"]').each(function(){
-                if(ruleIds.indexOf(parseInt($(this).val()))==-1){
-                    ruleIds.push(parseInt($(this).val()));
-                }
                 this.checked=true;
             });
         } else {
@@ -81,38 +74,6 @@
         /*阻止向上冒泡，以防再次触发点击操作*/
         event.stopPropagation();
     });
-
-     function chooseRule(ruleid){
-        if($("#rule"+ruleid).is(':checked')) {
-            $("#host" + ruleid).checked = true;
-            ruleIds.push(ruleid);
-        }else{
-            /**单选框取消选中时将它的value移除隐藏域*/
-            var index = ruleIds.indexOf(ruleid);
-            ruleIds.splice(index, 1);
-            $('#checkall').prop("checked",false);
-        }
-    };
-
-    $('#beginStudy').click(function() {
-         if(ruleIds.length==0) {
-             alert("请选择规则！");
-         }else {
-              console.log(ruleIds);
-               $.ajax({
-                type: 'POST',
-                dataType:'JSON',
-                traditional: true,
-                data:JSON.stringify({'ruleIds':ruleIds}),
-                url: '{% url 'learningsystem:getRuleIds' %}',
-                success: function (data) {
-                    if (data == 'sucess') {
-                        location.href ='{% url 'learningsystem:study'%}'
-                    }
-                }
-             });
-         }
-     });
 </script>
 </body>
 </html>
