@@ -20,6 +20,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('study/', include('learningsystem.urls')),
     path('learningSystem/', include('page.urls')),
-    # path('exam/', include('exam.urls')),
+    path('exam/', include('exam.urls')),
 
 ]

@@ -7,7 +7,7 @@ from page.models import Rule, Page
 from learningsystem.models import Item, Record
 
 
-def  ruleList(request):
+def ruleList(request):
     rule_list = Rule.objects.filter(implemented=1).order_by('rule_id')
     context = {
         'rule_list': rule_list,
@@ -15,10 +15,10 @@ def  ruleList(request):
     return render(request, 'rule_list.html', context)
 
 # 获取用户学习开始前选择的rule
-ruleids=[]
 
-def  study(request):
-    print(ruleids)
+
+def study(request):
+    ruleids=[4,5,6,7,8,9.10]
     # 规则筛选
     items = Item.objects.filter(rule_id__in=ruleids)
     item = items[0]
@@ -34,11 +34,9 @@ def  study(request):
     }
     return render(request, 'study_task.html', context)
 
-def  loading_iframe(request):
+
+def loading_iframe(request):
     return render(request, 'iframe.html')
-
-
-
 
 
 # 提交学习记录
