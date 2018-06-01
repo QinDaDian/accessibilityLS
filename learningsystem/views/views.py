@@ -1,13 +1,14 @@
-import datetime
+import json
 
-from django.http import JsonResponse, HttpResponse
+from django.http import  JsonResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
 import random
-
-from accessibilityLS import settings
 from page.models import Rule, Page
 from learningsystem.models import Item, Record
+
+
 
 def ruleList(request):
     rule_list = Rule.objects.filter(implemented=1).order_by('rule_id')
@@ -39,35 +40,19 @@ def loading_iframe(request):
 
 
 # 提交学习记录
-def submitLearn(request):
+@csrf_exempt
+def submit_learn(request):
+    arg = request.POST['checkResultInfo']
     record = Record.objects.create(
-        page_id=1,
-        rule_id=1,
+        page_id=arg.pageID,
+        rule_id=arg.ruleID,
         user_id=1,
         std_result=1,
-        user_result=request.POST['radioCheckResult'],
-        reason='test',
+        user_result=arg.userResult,
+        reason=arg.userReason,
         reason_images='test',
-        change_count=1,
-        judge=1,
+        change_count=arg.chooseCount,
+        judge=1 if 1 == arg.userResult else 0,
     )
     record.save()
-    return JsonResponse("success", safe=False)
-
-# //图片上传
-def swfUpload(request):
-    primaryKey=request.POST.get('primaryKey')  # 获取文件唯一标识符
-    upload_file = request.FILES.getlist('file')
-    print(upload_file[0])
-    for img in upload_file:
-        file_suffix = img.name.split(".")[-1]  #后缀
-        curr_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") #获取当前时间
-        newName = curr_time + '.'+file_suffix
-        fname = '%s/upload/%s' % (settings.MEDIA_ROOT, newName)
-        with open(fname, 'wb') as pic:
-            for f in img.chunks():
-                pic.write(f)
-            pic.close()
-    return HttpResponse("sucess")
-
-
+    return JsonResponse({'resultStatus':'FAIL'}, safe=False)

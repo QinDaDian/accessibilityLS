@@ -1,12 +1,12 @@
 from django.urls import path
 
-from learningsystem.views import views
+from learningsystem import views
 
 app_name = 'learningsystem'
 urlpatterns = [
-    path('ruleList/', views.ruleList, name='ruleList'),
-    path('studyIndex/', views.study, name='study'),
-    path('loading_iframe/', views.loading_iframe, name='loading_iframe'),
-    path('swfUpload/', views.swfUpload, name='swfUpload'),
-    path('submitLearn', views.submitLearn, name='submitLearn')
+    path(r'ruleList/', views.ruleList, name='ruleList'),
+    path(r'studyIndex/', views.study, name='study'),
+    path(r'loading_iframe/', views.loading_iframe, name='loading_iframe'),
+
+    path(r'submit_learn/', views.submit_learn, name='submit_learn')
 ]
