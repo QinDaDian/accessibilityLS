@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+{% load ls_tags %}
+{% csrf_token %}
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>{{host.hostName}}学习任务</title>
@@ -94,7 +96,7 @@
                 </div>
             </div>
             <hr style="background: #777; opacity:0.2;">
-            <form action="{% url 'learningsystem:submitLearn' %}" method="post" role="form" style="margin-bottom: 10px;" >
+            <form role="form" style="margin-bottom: 10px;" >
                 <fieldset>
                     <div class="form-group" style="margin-top: 0;" id="checkResult">
                         <p class="control-label  text-primary">检测结果</p>
@@ -156,15 +158,15 @@
                         </div>
                     </div>
                   <div class="form-group">
-                        <button type="submit" class="btn btn-raised btn-primary btn-block" id="btnSubmit" style="padding-top:10px; padding-bottom:10px;" >确定</button>
+                        <button class="btn btn-raised btn-primary btn-block" id="btnSubmit" style="padding-top:10px; padding-bottom:10px;" >确定</button>
                   </div>
                 </fieldset>
            </form>
            <div id="result" hidden>
                  <p class="text-primary">您的答案：<span class="text-muted" id="userResult"></span></p>
                  <p class="text-primary">您的理由：<span class="text-muted" id="userReason"></span></p>
-                 <p class="text-primary">标准答案：<span class="text-muted" id="stdResult" ></span></p>
-                 <p class="text-primary" >原因：<span class="text-muted" id="stdReason"></span>
+                 <p class="text-primary">标准答案：<span class="text-muted" id="stdResult" >{% result_exp item.result %}</span></p>
+                 <p class="text-primary" >原因：<span class="text-muted" id="stdReason">{{ item.reason }}</span>
                  </p>
            </div>
         </div>
@@ -245,7 +247,7 @@
             $('#result').slideDown();
             $.ajax({ //表单提交
                 type: 'POST',
-                {#url: '{% url '' %}',#}
+                url: '{% url "learningsystem:submit_learn" %}',
                 data: checkResultInfo,
                 async:false,
                 success:function (result) {

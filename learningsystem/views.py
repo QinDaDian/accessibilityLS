@@ -2,10 +2,12 @@ import json
 
 from django.http import  JsonResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 
 import random
 from page.models import Rule, Page
 from learningsystem.models import Item, Record
+
 
 
 def ruleList(request):
@@ -38,17 +40,19 @@ def loading_iframe(request):
 
 
 # 提交学习记录
-def submitLearn(request):
+@csrf_exempt
+def submit_learn(request):
+    arg = request.POST['checkResultInfo']
     record = Record.objects.create(
-        page_id=1,
-        rule_id=1,
+        page_id=arg.pageID,
+        rule_id=arg.ruleID,
         user_id=1,
         std_result=1,
-        user_result=request.POST['radioCheckResult'],
-        reason='test',
+        user_result=arg.userResult,
+        reason=arg.userReason,
         reason_images='test',
-        change_count=1,
-        judge=1,
+        change_count=arg.chooseCount,
+        judge=1 if 1 == arg.userResult else 0,
     )
     record.save()
-    return JsonResponse("success", safe=False)
+    return JsonResponse({'resultStatus':'FAIL'}, safe=False)
