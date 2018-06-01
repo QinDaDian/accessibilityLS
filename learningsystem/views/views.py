@@ -1,12 +1,13 @@
-import json
+import datetime
 
-from django.http import  JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 
 import random
+
+from accessibilityLS import settings
 from page.models import Rule, Page
 from learningsystem.models import Item, Record
-
 
 def ruleList(request):
     rule_list = Rule.objects.filter(implemented=1).order_by('rule_id')
@@ -52,3 +53,21 @@ def submitLearn(request):
     )
     record.save()
     return JsonResponse("success", safe=False)
+
+# //图片上传
+def swfUpload(request):
+    primaryKey=request.POST.get('primaryKey')  # 获取文件唯一标识符
+    upload_file = request.FILES.getlist('file')
+    print(upload_file[0])
+    for img in upload_file:
+        file_suffix = img.name.split(".")[-1]  #后缀
+        curr_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") #获取当前时间
+        newName = curr_time + '.'+file_suffix
+        fname = '%s/upload/%s' % (settings.MEDIA_ROOT, newName)
+        with open(fname, 'wb') as pic:
+            for f in img.chunks():
+                pic.write(f)
+            pic.close()
+    return HttpResponse("sucess")
+
+

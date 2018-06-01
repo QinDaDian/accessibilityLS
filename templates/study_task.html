@@ -175,6 +175,7 @@
      </div>
     <input type="hidden" id="pageID"  value="{{page.page_id}}" />
     <input type="hidden" id="itemID"  value="{{item.item_id}}" />
+    <input type="hidden" id="recordID"  value="{{record_id}}" />
 </div>
 
 {% include "common/footer.html"%}
@@ -183,6 +184,16 @@
 <script type="text/javascript">
     window.ruleid=parseInt($('#ruleid').val());
     $('.footer').hide();
+
+    (function( $ ){
+        // 当domReady的时候开始初始化
+        $(function() {
+            var uid=parseInt($("recordID").val());
+            var arg={'primaryKey':123};
+            uploadReady('{% url 'learningsystem:swfUpload' %}',arg);
+        });
+   })( jQuery );
+
    //主iframe加载完成时将加载信息隐藏
     function mainIframeLoaded() {
       $('#loadingIframe').css('display','none');

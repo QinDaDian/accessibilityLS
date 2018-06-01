@@ -16,9 +16,8 @@ class Item(BaseModel):
     host_id = models.IntegerField('网站id')
     page_id = models.IntegerField('网页id')
     result = models.IntegerField('标准答案', choices=RESULT)
-    reason = models.TextField('文字理由', null=True)
-    # text_reason = models.TextField('文字理由', null=True)
-    # img_reason = models.ImageField('图片理由', null=True)
+    text_reason = models.TextField('文字理由', null=True)
+    img_reason = models.ImageField('图片理由', null=True)
 
 
 class Record(BaseModel):
