@@ -96,7 +96,7 @@
                 </div>
             </div>
             <hr style="background: #777; opacity:0.2;">
-            <form role="form" style="margin-bottom: 10px;" >
+            <div style="margin-bottom: 10px;" >
                 <fieldset>
                     <div class="form-group" style="margin-top: 0;" id="checkResult">
                         <p class="control-label  text-primary">检测结果</p>
@@ -161,7 +161,7 @@
                         <button class="btn btn-raised btn-primary btn-block" id="btnSubmit" style="padding-top:10px; padding-bottom:10px;" >确定</button>
                   </div>
                 </fieldset>
-           </form>
+            </div>
            <div id="result" hidden>
                  <p class="text-primary">您的答案：<span class="text-muted" id="userResult"></span></p>
                  <p class="text-primary">您的理由：<span class="text-muted" id="userReason"></span></p>
@@ -177,7 +177,6 @@
      </div>
     <input type="hidden" id="pageID"  value="{{page.page_id}}" />
     <input type="hidden" id="itemID"  value="{{item.item_id}}" />
-    <input type="hidden" id="recordID"  value="{{record_id}}" />
 </div>
 
 {% include "common/footer.html"%}
@@ -186,12 +185,13 @@
 <script type="text/javascript">
     window.ruleid=parseInt($('#ruleid').val());
     $('.footer').hide();
-
     (function( $ ){
         // 当domReady的时候开始初始化
         $(function() {
-            var uid=parseInt($("recordID").val());
-            var arg={'primaryKey':123};
+            var arg={
+                "ruleID" : ruleid,
+                "pageID":parseInt($("#pageID").val()),
+            };
             uploadReady('{% url 'learningsystem:swfUpload' %}',arg);
         });
    })( jQuery );
@@ -219,7 +219,7 @@
         }
     });
 
-     var userReason;//实际不通过原因
+     var userReason='';//实际不通过原因
       //常用通过/不通过原因处理
      $('#freqAns').change(function() {
         if($('#freqAns').get(0).selectedIndex == 0) {  //亲自写
@@ -239,13 +239,15 @@
         if((userResult == 0||userResult == 1)&&!$.trim($('#reason').val())) {
                 showModal('错误提示', '请给出原因', '#reason');
         }else {
-            checkResultInfo["ruleID"] =ruleid;
-            checkResultInfo["userResult"] = userResult;
-            checkResultInfo["userReason"] = userReason;
-            checkResultInfo["chooseCount"]=chooseCount;
-            checkResultInfo["pageID"]=parseInt($("pageID").val());
-            checkResultInfo["itemID"]=parseInt($("itemID").val());
-        //    console.log(checkResultInfo);
+            checkResultInfo = {
+                "ruleID" : ruleid,
+                "userResult":userResult,
+                "userReason":userReason,
+                "chooseCount":chooseCount,
+                "pageID":parseInt($("#pageID").val()),
+                "itemID": parseInt($("#itemID").val())
+            }
+            console.log(checkResultInfo);
             showUserResult(userResult);
             if(userResult == 0||userResult == 1){
                $('#userReason').text($.trim($('#reason').val()));
@@ -258,15 +260,14 @@
             $('#result').slideDown();
             $.ajax({ //表单提交
                 type: 'POST',
+                dataType:'json',
+                data:  JSON.stringify(checkResultInfo),
                 url: '{% url "learningsystem:submit_learn" %}',
-                data: checkResultInfo,
                 async:false,
                 success:function (result) {
-                    result = JSON.parse(result);
                     if (result["resultStatus"] == "FAIL") {
-                     showModal("错误提示", result.resultMsg, '');
-                      $('#stdReason').text(result.stdReason);
-                      showStdResult(result.std_result);
+                      $('#stdReason').text(result['stdReason']);
+                      showStdResult(result['std_result']);
                     }
                 }
             });
@@ -275,17 +276,18 @@
 
      function changeFrom(ruleid){
            window.ruleid=ruleid;
-           var itemInfo = {};
-           itemInfo["ruleID"]=ruleid;
-           itemInfo["pageID"]=parseInt($("pageID").val());
-           itemInfo["itemID"]=parseInt($("itemID").val());
+           var itemInfo={
+              "ruleID":ruleid,
+              "pageID":parseInt($("pageID").val()),
+              "itemID":parseInt($("itemID").val())
+           }
            $.ajax({     //获取学习记录
                 type: 'POST',
-                data: itemInfo,
+                dataType:'json',
+                data:JSON.stringify(itemInfo),
                 {#url: '{% url '' %}',#}
                 async:false,
                 success:function (result) {
-                    result = JSON.parse(result);
                     $('#title').text(result.title); //检测规则
                     $('#description').text(result.description);
                     $('#checkMethod').text(result.checkMethod);
