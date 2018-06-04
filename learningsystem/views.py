@@ -1,6 +1,7 @@
 import datetime
 import json
 
+from django.core.serializers import serialize
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -56,7 +57,7 @@ def submit_learn(request):
             text_reason=item.text_reason
         else:
             std_result = 2
-            text_reason='不存在'
+            text_reason = '不存在'
             Record.objects.create(
                 page_id=arg['pageID'],
                 rule_id=arg['ruleID'],
@@ -75,19 +76,19 @@ def submit_learn(request):
         }
     return JsonResponse(result, safe=False)
 
-    #切换学习项
-@csrf_exempt
-def changeitem(request):
+# 切换学习项
+
+def change_item(request):
     if request.is_ajax():
         arg = json.loads(request.body.decode('utf-8'))
-        print(arg)
-        rule=Rule.objects.filter(rule_id=arg['ruleID'])
+        rule =Rule.objects.filter(rule_id=arg['ruleID'])
+        print(tojson(rule))
         record = Record.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'], user_id=1)
         item = Item.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'])
         result = {
-            "rule": rule,
-            "record": record,
-            "item": item
+            "rule": tojson(rule),
+            "record": tojson(record),
+            "item": tojson(item)
         }
         return JsonResponse(result, safe=False)
 
@@ -108,3 +109,7 @@ def swfUpload(request):
         pic.close()
     return HttpResponse("sucess")
 
+
+def tojson(queryset):
+    queryset=serialize("json", queryset, ensure_ascii=False)
+    return queryset
