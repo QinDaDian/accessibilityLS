@@ -187,6 +187,7 @@
     (function( $ ){
         // 当domReady的时候开始初始化
         $(function() {
+           window.currTime=new Date().toLocaleString('chinese',{hour12:false}); //截取时间
             var arg={
                 "ruleID" : ruleid,
                 "pageID":parseInt($("#pageID").val()),
@@ -194,16 +195,6 @@
             uploadReady('{% url 'learningsystem:swfUpload' %}',arg);
         });
    })( jQuery );
-
-   //主iframe加载完成时将加载信息隐藏
-    function mainIframeLoaded() {
-      $('#loadingIframe').css('display','none');
-    }
-
-    // 规则折叠
-    $('#showRuleSpecific').change(function() {
-        $('#ruleSpecific').slideToggle();
-    });
 
      //答案切换时原因折叠
     var chooseCount=0; //答案切换次数
@@ -243,7 +234,8 @@
                 "userResult":userResult,
                 "userReason":userReason,
                 "chooseCount":chooseCount,
-                "pageID":parseInt($("#pageID").val())
+                "pageID":parseInt($("#pageID").val()),
+                "start_time": currTime
             }
             showUserResult(userResult);
             if(userResult == 0||userResult == 1){

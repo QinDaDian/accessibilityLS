@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import json
 
 from django.core.serializers import serialize
@@ -30,9 +30,11 @@ def study(request):
        ruleids=request.POST.getlist('checkchild')
     # 规则筛选
     pages = Page.objects.all()
-    page = random.sample(list(pages),1)[0]
-    # items = Item.objects.filter(page_id=page.page_id, rule_id__in=ruleids)
-    rule_list = Rule.objects.filter(rule_id__in=ruleids)[:7]
+    page = random.sample(list(pages),7)
+    if len(ruleids) == 0:
+        rule_list = random.sample(list(Rule.objects.all()),7)[0]
+    else:
+        rule_list = Rule.objects.filter(rule_id__in=ruleids)[:7]
     context = {
         'page': page,
         'rule_list': rule_list,
@@ -52,6 +54,9 @@ def submit_learn(request):
     if request.is_ajax():
         arg = json.loads(request.body.decode('utf-8'))
         item = Item.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'])
+        print(arg["start_time"])     # 2018/6/4 21:40:24
+        start_time =datetime.strptime(arg["start_time"], "%Y/%m/%d %H:%M:%S")
+        start_time =datetime.strftime(start_time, "%Y-%m-%d %H:%M:%S")
         if item:
             std_result = item.result
             text_reason=item.text_reason
@@ -68,6 +73,8 @@ def submit_learn(request):
                 reason_images=imgs,
                 change_count=arg['chooseCount'],
                 judge=1 if std_result == arg['userResult'] else 0,
+                start_time=start_time,
+                create_time=start_time,
         )
         result = {
             "stdReason": text_reason,
@@ -82,7 +89,6 @@ def change_item(request):
     if request.is_ajax():
         arg = json.loads(request.body.decode('utf-8'))
         rule =Rule.objects.filter(rule_id=arg['ruleID'])
-        print(tojson(rule))
         record = Record.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'], user_id=1)
         item = Item.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'])
         result = {
@@ -99,7 +105,7 @@ def swfUpload(request):
     global IMGs
     upload_file = request.FILES.get('file')
     file_suffix = upload_file.name.split(".")[-1]  #后缀
-    curr_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") #获取当前时间
+    curr_time = datetime.now().strftime("%Y%m%d%H%M%S%f") #获取当前时间
     newName = 'upload/'+ curr_time + '.'+file_suffix
     IMGs.append(newName)
     fname = '%s/%s' % (settings.MEDIA_ROOT, newName)
