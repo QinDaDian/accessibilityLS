@@ -11,7 +11,8 @@ from accessibilityLS import settings
 from page.models import Rule, Page
 from learningsystem.models import Item, Record
 
-save_tag = 0   #标记记录是否已存在
+IMGs = []   #上传的图片
+ruleids=[]
 
 def ruleList(request):
     rule_list = Rule.objects.filter(implemented=1).order_by('rule_id')
@@ -23,15 +24,15 @@ def ruleList(request):
 
 
 def study(request):
-    ruleids=request.POST.getlist('checkchild')
+    global ruleids
+    if request.method=="POST":
+       ruleids=request.POST.getlist('checkchild')
     # 规则筛选
     pages = Page.objects.all()
-    print(pages)
-    page = random.sample(list(pages), 1)[0]
-    items = Item.objects.filter(page_id=page.page_id, rule_id__in=ruleids)
+    page = random.sample(list(pages),1)[0]
+    # items = Item.objects.filter(page_id=page.page_id, rule_id__in=ruleids)
     rule_list = Rule.objects.filter(rule_id__in=ruleids)[:7]
     context = {
-        'items': items,
         'page': page,
         'rule_list': rule_list,
     }
@@ -45,62 +46,65 @@ def loading_iframe(request):
 # 提交学习记录
 @csrf_exempt
 def submit_learn(request):
+    global IMGs
+    imgs = ','.join(IMGs)
     if request.is_ajax():
         arg = json.loads(request.body.decode('utf-8'))
-        if save_tag == 0:
-            record = Record.objects.create(
+        item = Item.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'])
+        if item:
+            std_result = item.result
+            text_reason=item.text_reason
+        else:
+            std_result = 2
+            text_reason='不存在'
+            Record.objects.create(
                 page_id=arg['pageID'],
                 rule_id=arg['ruleID'],
                 user_id=1,
-                std_result=1,
+                std_result=std_result,
                 user_result=arg['userResult'],
                 reason=arg['userReason'],
-                reason_images='test',
+                reason_images=imgs,
                 change_count=arg['chooseCount'],
-                judge=1 if 1 == arg['userResult'] else 0,
-            )
-            record.save()
-        elif save_tag == 1:
-            Record.objects.filter(
-                page_id=arg['pageID'],
-                rule_id=arg['ruleID'],
-                user_id=1,
-            ).update(
-                std_result=1,
-                user_result=arg['userResult'],
-                reason=arg['userReason'],
-                reason_images='test',
-                change_count=arg['chooseCount'],
-                judge=1 if 1 == arg['userResult'] else 0,
-            )
-    return JsonResponse({'resultStatus':'FAIL'}, safe=False)
+                judge=1 if std_result == arg['userResult'] else 0,
+        )
+        result = {
+            "stdReason": text_reason,
+            "std_result": std_result,
+            'resultStatus': 'SUCESS'
+        }
+    return JsonResponse(result, safe=False)
+
+    #切换学习项
+@csrf_exempt
+def changeitem(request):
+    if request.is_ajax():
+        arg = json.loads(request.body.decode('utf-8'))
+        print(arg)
+        rule=Rule.objects.filter(rule_id=arg['ruleID'])
+        record = Record.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'], user_id=1)
+        item = Item.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'])
+        result = {
+            "rule": rule,
+            "record": record,
+            "item": item
+        }
+        return JsonResponse(result, safe=False)
+
 
 # //图片上传
 @csrf_exempt
 def swfUpload(request):
-    upload_file = request.FILES['file']
-    newnamelist=[]
-    for img in upload_file:
-        file_suffix = img.name.split(".")[-1]  #后缀
-        curr_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") #获取当前时间
-        newName = 'upload/'+ curr_time + '.'+file_suffix
-        newnamelist.append(newName)
-        fname = '%s/%s' % (settings.MEDIA_ROOT, newName)
-        with open(fname, 'wb') as pic:
-            for f in img.chunks():
-                pic.write(f)
-            pic.close()
-    print(','.join(newnamelist))
-    # Record.objects.create(
-    #     page_id=request.POST.get('pageID'),
-    #     rule_id=request.POST.get('ruleID'),
-    #     user_result=1,
-    #     user_id=1,
-    #     std_result=1,
-    #     judge=1,
-    #     reason_images=','.join(newnamelist),
-    # )
-    #
-    # save_tag =1
+    global IMGs
+    upload_file = request.FILES.get('file')
+    file_suffix = upload_file.name.split(".")[-1]  #后缀
+    curr_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S%f") #获取当前时间
+    newName = 'upload/'+ curr_time + '.'+file_suffix
+    IMGs.append(newName)
+    fname = '%s/%s' % (settings.MEDIA_ROOT, newName)
+    with open(fname, 'wb') as pic:
+        for f in upload_file.chunks():
+            pic.write(f)
+        pic.close()
     return HttpResponse("sucess")
 

@@ -176,7 +176,6 @@
          <button type="button" class="btn btn-raised btn-primary btn-block" id="next" style="padding-top:10px; padding-bottom:10px;margin-top: 10px" >下一个</button>
      </div>
     <input type="hidden" id="pageID"  value="{{page.page_id}}" />
-    <input type="hidden" id="itemID"  value="{{item.item_id}}" />
 </div>
 
 {% include "common/footer.html"%}
@@ -244,10 +243,8 @@
                 "userResult":userResult,
                 "userReason":userReason,
                 "chooseCount":chooseCount,
-                "pageID":parseInt($("#pageID").val()),
-                "itemID": parseInt($("#itemID").val())
+                "pageID":parseInt($("#pageID").val())
             }
-            console.log(checkResultInfo);
             showUserResult(userResult);
             if(userResult == 0||userResult == 1){
                $('#userReason').text($.trim($('#reason').val()));
@@ -265,7 +262,7 @@
                 url: '{% url "learningsystem:submit_learn" %}',
                 async:false,
                 success:function (result) {
-                    if (result["resultStatus"] == "FAIL") {
+                    if (result["resultStatus"] == "SUCESS") {
                       $('#stdReason').text(result['stdReason']);
                       showStdResult(result['std_result']);
                     }
@@ -278,38 +275,38 @@
            window.ruleid=ruleid;
            var itemInfo={
               "ruleID":ruleid,
-              "pageID":parseInt($("pageID").val()),
-              "itemID":parseInt($("itemID").val())
-           }
+              "pageID":parseInt($("pageID").val())
+           };
            $.ajax({     //获取学习记录
                 type: 'POST',
                 dataType:'json',
                 data:JSON.stringify(itemInfo),
-                {#url: '{% url '' %}',#}
+                url: '{% url 'learningsystem:changeitem' %}',
                 async:false,
                 success:function (result) {
-                    $('#title').text(result.title); //检测规则
-                    $('#description').text(result.description);
-                    $('#checkMethod').text(result.checkMethod);
-                    $('#passCondition').text(result.passCondition);
-                    if(!result.user_result){
-                        $("input[name='radioCheckResult']").attr('disabled', 'true');
-                        $('#checkResult').attr('disabled','true');
-                        $('#btnSubmit').attr('disabled','true');
-                        $('#result').slideDown();
-                        $('#userReason').text(result.userReason); //检测结果
-                        showUserResult(result.user_result );
-                        $('#stdReason').text(result.stdReason);
-                        showStdResult(result.std_result);
-                    }
+                    alert('dddddd');
+                    alert(rule.title);
+                    {#$('#title').text(rule.title); //检测规则#}
+                    {#$('#description').text(rule.description);#}
+                    {#$('#checkMethod').text(rule.checkMethod);#}
+                    {#$('#passCondition').text(rule.passCondition);#}
+                    {#if(record){#}
+                    {#    $("input[name='radioCheckResult']").attr('disabled', 'true');#}
+                    {#    $('#checkResult').attr('disabled','true');#}
+                    {#    $('#btnSubmit').attr('disabled','true');#}
+                    {#    $('#result').slideDown();#}
+                    {#    $('#userReason').text(result["userReason"]); //检测结果#}
+                    {#    showUserResult(result["userResult"] );#}
+                    {#    $('#stdReason').text(result["stdReason"]);#}
+                    {#    showStdResult(result["stdResult"]);#}
+                    #}
                 }
             });
        }
 
        //跳转到下个学习页面
         $('#next').click(function() {
-           itemID=parseInt($("itemID").val());
-           {#window.location="{% url 'learningsystem:getNext' itemID %}";#}
+           window.location="{% url 'learningsystem:study' %}";
         })
 
 </script>
