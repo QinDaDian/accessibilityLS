@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>网站无障碍系统访问错误</title>
+    {% include "common/head.html"%}
+
+    <style>
+        /*.is-moment .hero{background-color:#61b2a7;box-shadow:inset 0 10px 10px #61b2a7}*/
+
+        /*.is-moment-timezone .hero{background-color:#4e7cad;box-shadow:inset 0 10px 10px #4e7cad}*/
+        .is-moment-timezone .hero{box-shadow:inset 0 10px 10px #4e7cad}
+
+        .hero-circle{width:150px;height:150px;margin:0 auto;position:relative;border:8px solid #61b2a7;border-radius:50%;box-shadow:0 1px 8px rgba(34,34,34,0.3),inset 0 1px 8px rgba(34,34,34,0.3);}
+
+        /*.is-moment .hero-circle{background-color:#61b2a7}*/
+
+        /*.is-moment-timezone .hero-circle{background-color:#4e7cad}*/
+
+        .hero-face{width:100%;height:100%}
+
+        .hero-face:after{position:absolute;top:50%;left:50%;width:12px;height:12px;margin:-6px 0 0 -6px;background:#61b2a7;border-radius:6px;content:"";display:block}
+
+        .hero-hour{width:0;height:0;position:absolute;top:50%;left:50%;margin:-4px 0 -4px -25%;padding:4px 0 4px 25%;background:#61b2a7;-webkit-transform-origin:100% 50%;-ms-transform-origin:100% 50%;transform-origin:100% 50%;border-radius:4px 0 0 4px}
+
+        .hero-minute{width:0;height:0;position:absolute;top:50%;left:50%;margin:-40% -3px 0;padding:40% 3px 0;background:#61b2a7;-webkit-transform-origin:50% 100%;-ms-transform-origin:50% 100%;transform-origin:50% 100%;border-radius:3px 3px 0 0}
+
+        .hero-second{width:0;height:0;position:absolute;top:50%;left:50%;margin:-40% -1px 0 0;padding:40% 1px 0;background:#61b2a7;-webkit-transform-origin:50% 100%;-ms-transform-origin:50% 100%;transform-origin:50% 100%}
+
+        .align-center{ position: absolute; top: 50%; left: 50%; margin-top: -75px; margin-left: -177px;}
+        /*.align-center{ position: absolute; top: 50%; left: 50%;}*/
+
+        .vcenter {display: inline-block; vertical-align: middle; float: none;}
+    </style>
+</head>
+
+<body class="is-moment">
+    <div class="align-center" id="main">
+        <div class="hero hero-moment vcenter">
+            <div class="centered">
+                <div class="hero-circle">
+                    <div class="hero-face">
+                        <div id="hour" class="hero-hour"></div>
+                        <div id="minute" class="hero-minute"></div>
+                        <div id="second" class="hero-second"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; margin-left: 20px;" class="vcenter">
+            <h1 style="margin-top: 0; color: #61b2a7;"><strong>呀！出错了</strong></h1>
+            <ul class="list-unstyled list-inline" style="margin-top: 25px; margin-bottom: 0;">
+                <li><a href="{% url 'page:index' %}">返回首页</a></li>
+                <li>|</li>
+                <li><a href="javascript:history.back(-1);">返回上一页</a></li>
+            </ul>
+        </div>
+    </div>
+
+    {% include "common/footer.html"%}
+    <script src="/static/js/error.js"></script>
+
+    <script>
+//        document.getElementById("main").style.marginTop = 0-document.getElementById("main").offsetHeight/2;
+//        document.getElementById("main").style.marginLeft = 0-document.getElementById("main").offsetWidth/2;
+    </script>
+</body>
+</html>

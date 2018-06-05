@@ -68,7 +68,7 @@
                 <li class="active text-primary text-center" ><strong>学习条目</strong></li>
                 <hr style="background: #777; opacity:0.2;">
                 {% for r in rule_list %}
-                     <li><a href="" onclick ="changeFrom({{r.rule_id}});return false" id="change{{ r.rule_id }}" >{{ r.title}}<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
+                     <li><a href="javascript:;" onclick ="javascript:changeFrom({{r.rule_id}})" id="change{{ r.rule_id }}" >{{ r.title}}<i class="mdui-icon material-icons"  style="float: right ">&#xe5cc;</i></a></li>
                 {% endfor %}
             </ul>
         </div>
@@ -96,7 +96,7 @@
                 </div>
             </div>
             <hr style="background: #777; opacity:0.2;">
-            <form role="form" style="margin-bottom: 10px;" >
+            <div style="margin-bottom: 10px;" >
                 <fieldset>
                     <div class="form-group" style="margin-top: 0;" id="checkResult">
                         <p class="control-label  text-primary">检测结果</p>
@@ -161,12 +161,12 @@
                         <button class="btn btn-raised btn-primary btn-block" id="btnSubmit" style="padding-top:10px; padding-bottom:10px;" >确定</button>
                   </div>
                 </fieldset>
-           </form>
+            </div>
            <div id="result" hidden>
                  <p class="text-primary">您的答案：<span class="text-muted" id="userResult"></span></p>
                  <p class="text-primary">您的理由：<span class="text-muted" id="userReason"></span></p>
-                 <p class="text-primary">标准答案：<span class="text-muted" id="stdResult" >{% result_exp item.result %}</span></p>
-                 <p class="text-primary" >原因：<span class="text-muted" id="stdReason">{{ item.reason }}</span>
+                 <p class="text-primary">标准答案：<span class="text-muted" id="stdResult" ></span></p>
+                 <p class="text-primary" >原因：<span class="text-muted" id="stdReason"></span>
                  </p>
            </div>
         </div>
@@ -176,7 +176,6 @@
          <button type="button" class="btn btn-raised btn-primary btn-block" id="next" style="padding-top:10px; padding-bottom:10px;margin-top: 10px" >下一个</button>
      </div>
     <input type="hidden" id="pageID"  value="{{page.page_id}}" />
-    <input type="hidden" id="itemID"  value="{{item.item_id}}" />
 </div>
 
 {% include "common/footer.html"%}
@@ -185,15 +184,17 @@
 <script type="text/javascript">
     window.ruleid=parseInt($('#ruleid').val());
     $('.footer').hide();
-   //主iframe加载完成时将加载信息隐藏
-    function mainIframeLoaded() {
-      $('#loadingIframe').css('display','none');
-    }
-
-    // 规则折叠
-    $('#showRuleSpecific').change(function() {
-        $('#ruleSpecific').slideToggle();
-    });
+    (function( $ ){
+        // 当domReady的时候开始初始化
+        $(function() {
+           window.currTime=new Date().toLocaleString('chinese',{hour12:false}); //截取时间
+            var arg={
+                "ruleID" : ruleid,
+                "pageID":parseInt($("#pageID").val()),
+            };
+            uploadReady('{% url 'learningsystem:swfUpload' %}',arg);
+        });
+   })( jQuery );
 
      //答案切换时原因折叠
     var chooseCount=0; //答案切换次数
@@ -208,7 +209,7 @@
         }
     });
 
-     var userReason;//实际不通过原因
+     var userReason='';//实际不通过原因
       //常用通过/不通过原因处理
      $('#freqAns').change(function() {
         if($('#freqAns').get(0).selectedIndex == 0) {  //亲自写
@@ -228,13 +229,14 @@
         if((userResult == 0||userResult == 1)&&!$.trim($('#reason').val())) {
                 showModal('错误提示', '请给出原因', '#reason');
         }else {
-            checkResultInfo["ruleID"] =ruleid;
-            checkResultInfo["userResult"] = userResult;
-            checkResultInfo["userReason"] = userReason;
-            checkResultInfo["chooseCount"]=chooseCount;
-            checkResultInfo["pageID"]=parseInt($("pageID").val());
-            checkResultInfo["itemID"]=parseInt($("itemID").val());
-        //    console.log(checkResultInfo);
+            checkResultInfo = {
+                "ruleID" : ruleid,
+                "userResult":userResult,
+                "userReason":userReason,
+                "chooseCount":chooseCount,
+                "pageID":parseInt($("#pageID").val()),
+                "start_time": currTime
+            }
             showUserResult(userResult);
             if(userResult == 0||userResult == 1){
                $('#userReason').text($.trim($('#reason').val()));
@@ -247,15 +249,14 @@
             $('#result').slideDown();
             $.ajax({ //表单提交
                 type: 'POST',
+                dataType:'json',
+                data:  JSON.stringify(checkResultInfo),
                 url: '{% url "learningsystem:submit_learn" %}',
-                data: checkResultInfo,
                 async:false,
                 success:function (result) {
-                    result = JSON.parse(result);
-                    if (result["resultStatus"] == "FAIL") {
-                     showModal("错误提示", result.resultMsg, '');
-                      $('#stdReason').text(result.stdReason);
-                      showStdResult(result.std_result);
+                    if (result["resultStatus"] == "SUCESS") {
+                      $('#stdReason').text(result['stdReason']);
+                      showStdResult(result['std_result']);
                     }
                 }
             });
@@ -263,31 +264,45 @@
     });
 
      function changeFrom(ruleid){
+          $('#result').slideUp();
+          $("input[name='radioCheckResult']").prop('disabled', false);
+          $('#btnSubmit').prop('disabled', false);
            window.ruleid=ruleid;
-           var itemInfo = {};
-           itemInfo["ruleID"]=ruleid;
-           itemInfo["pageID"]=parseInt($("pageID").val());
-           itemInfo["itemID"]=parseInt($("itemID").val());
+           var itemInfo={
+              "ruleID":ruleid,
+              "pageID":parseInt($("#pageID").val())
+           };
            $.ajax({     //获取学习记录
                 type: 'POST',
-                data: itemInfo,
-                {#url: '{% url '' %}',#}
+                dataType:'json',
+                data:JSON.stringify(itemInfo),
+                url: '{% url 'learningsystem:change_item' %}',
                 async:false,
                 success:function (result) {
-                    result = JSON.parse(result);
-                    $('#title').text(result.title); //检测规则
-                    $('#description').text(result.description);
-                    $('#checkMethod').text(result.checkMethod);
-                    $('#passCondition').text(result.passCondition);
-                    if(!result.user_result){
+                    rule =JSON.parse(result.rule);
+                    record =JSON.parse(result.record);
+                    item =JSON.parse(result.item);
+                    $('#title').text(rule[0].fields.title); //检测规则
+                    $('#description').text(rule[0].fields.description);
+                    $('#checkMethod').text(rule[0].fields.check_method);
+                    $('#passCondition').text(rule[0].fields.pass_condition);
+                    if(record!='') {  //显示记录结果
                         $("input[name='radioCheckResult']").attr('disabled', 'true');
-                        $('#checkResult').attr('disabled','true');
-                        $('#btnSubmit').attr('disabled','true');
+                        $('#btnSubmit').attr('disabled', 'true');
                         $('#result').slideDown();
-                        $('#userReason').text(result.userReason); //检测结果
-                        showUserResult(result.user_result );
-                        $('#stdReason').text(result.stdReason);
-                        showStdResult(result.std_result);
+                        showUserResult(record[0].fields.user_result);
+                        $(":radio[name='radioCheckResult'][value='" + record[0].fields.reason + "']").prop("checked", "checked");
+                        if(record[0].fields.reason!=''){
+                           $('#userReason').text(record[0].fields.reason); //检测结果
+                        }else{
+                           $('#userReason').text('暂无原因');
+                        }
+                        if(item[0].fields.text_reason!=''){
+                            $('#stdReason').text(item[0].fields.text_reason);
+                        } else {
+                            $('#stdReason').text('暂无原因');
+                        }
+                        showStdResult(record[0].fields.std_result);
                     }
                 }
             });
@@ -295,8 +310,7 @@
 
        //跳转到下个学习页面
         $('#next').click(function() {
-           itemID=parseInt($("itemID").val());
-           {#window.location="{% url 'learningsystem:getNext' itemID %}";#}
+           window.location="{% url 'learningsystem:study' %}";
         })
 
 </script>

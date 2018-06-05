@@ -89,6 +89,17 @@ function removejscssfile(filename, filetype){
         }
     }
 
+    //主iframe加载完成时将加载信息隐藏
+    function mainIframeLoaded() {
+      $('#loadingIframe').css('display','none');
+    }
+
+    // 规则折叠
+    $('#showRuleSpecific').change(function() {
+        $('#ruleSpecific').slideToggle();
+    });
+
+
 
 
 
