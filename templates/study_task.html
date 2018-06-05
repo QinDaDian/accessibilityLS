@@ -254,7 +254,7 @@
                 url: '{% url "learningsystem:submit_learn" %}',
                 async:false,
                 success:function (result) {
-                    if (result["resultStatus"] == "SUCESS") {
+                    if (result["resultStatus"] == "SUCCESS") {
                       $('#stdReason').text(result['stdReason']);
                       showStdResult(result['std_result']);
                     }

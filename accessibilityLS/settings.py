@@ -133,3 +133,13 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS=(os.path.join(BASE_DIR, 'static/'),)
 
 MEDIA_ROOT=os.path.join(BASE_DIR,"static/media").replace('\\', '/')
+
+SESSION_COOKIE_NAME="eagle"  # Session的cookie保存在浏览器上时的key，即：sessionid＝随机字符串
+SESSION_COOKIE_PATH="/"  # Session的cookie保存的路径
+SESSION_COOKIE_DOMAIN = None  # Session的cookie保存的域名
+SESSION_COOKIE_SECURE = False  # 是否Https传输cookie
+SESSION_COOKIE_HTTPONLY = True  # 是否Session的cookie只支持http传输
+SESSION_COOKIE_AGE = 86400  # Session的cookie失效日期（2周） 默认1209600秒
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # 是否关闭浏览器使得Session过期
+
+SESSION_SAVE_EVERY_REQUEST = True  # 如果设置 True，在30分钟期间有请求服务端，就不会过期
