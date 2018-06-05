@@ -35,9 +35,10 @@ def study(request):
     pages = Page.objects.all()
     page = random.sample(list(pages),7)
     if len(ruleids) == 0:
-        rule_list = random.sample(list(Rule.objects.all()),7)[0]
+        rule_list = random.sample(list(Rule.objects.all()), 7)[0]
     else:
         rule_list = Rule.objects.filter(rule_id__in=ruleids)[:7]
+    items = Item.objects.filter(page_id=page.page_id, rule_id__in=ruleids)
     context = {
         'items': items,
         'page': page,
@@ -90,7 +91,6 @@ def submit_learn(request):
     return JsonResponse(result, safe=False)
 
 # 切换学习项
-
 def change_item(request):
     if request.is_ajax():
         arg = json.loads(request.body.decode('utf-8'))
