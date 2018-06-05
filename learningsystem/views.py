@@ -7,9 +7,10 @@ from django.views.decorators.csrf import csrf_exempt
 import random
 from page.models import Rule, Page
 from learningsystem.models import Item, Record
+from utils.decorator import authentication
 
 
-
+@authentication
 def ruleList(request):
     rule_list = Rule.objects.filter(implemented=1).order_by('rule_id')
     context = {
@@ -19,6 +20,7 @@ def ruleList(request):
 # 获取用户学习开始前选择的rule
 
 
+@authentication
 def study(request):
     ruleids=request.POST.getlist('checkchild')
     # 规则筛选
@@ -35,12 +37,14 @@ def study(request):
     return render(request, 'study_task.html', context)
 
 
+@authentication
 def loading_iframe(request):
     return render(request, 'iframe.html')
 
 
 # 提交学习记录
 @csrf_exempt
+@authentication
 def submit_learn(request):
     arg = request.POST['checkResultInfo']
     record = Record.objects.create(

@@ -5,6 +5,7 @@ from page.views import views
 app_name = 'page'
 urlpatterns = [
     path('', views.index, name='index'),
-    path('rule/', views.rule, name='rule'),
+    path(r'rule/', views.rule, name='rule'),
+    path(r'login/<username>/', views.login)
 
 ]

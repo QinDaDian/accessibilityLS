@@ -1,9 +1,21 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
+from utils.decorator import authentication
+
 
 # Create your views here.
-def  index(request):
+@authentication
+def index(request):
     return render(request, 'index.html')
 
 
-def  rule(request):
+@authentication
+def rule(request):
     return render(request, 'rule.html')
+
+
+def login(request, username):
+    request.session['username'] = username
+    return HttpResponseRedirect(reverse('page:index'))
