@@ -116,15 +116,17 @@
                     <div id="checkReason" style="margin-bottom: 5px;" >
                         <div class="form-group" >
                             <label for="freqAns" class="control-label">常见原因示例</label>
-                             <div>
+                            <div>
                                 <select id="freqAns" class="form-control" >
                                   <option>亲自写(自带清空技能)</option>
-                                  <option>ddddddd</option>
-                                   {% if rule.freqAns %}
-        {#                                <c:set var="optionsFreqAns" value="{{fn.split({{rule.freqAns}}, '#F#G#F#')}}" />#}
-        {#                                <c:forEach var="optionFreqAns" items="{{optionsFreqAns}}">#}
-        {#                                    <option>{{optionFreqAns}}</option>#}
-        {#                                </c:forEach>#}
+                                   {% if item %}
+                                       {% if item.text_reason %}
+                                            <option>{{item.text_reason}}</option>
+                                       {% else %}
+                                            <option>不存在</option>
+                                       {% endif %}
+                                   {% else %}
+                                        <option>不存在</option>
                                    {% endif %}
                                 </select>
                             </div>
@@ -136,9 +138,6 @@
                             <span class="help-block">请务必给出通过/不通过的原因</span>
                          <div id="wrapper">
                             <div id="container">
-                                <span id="localImag" style="height: 100px; width: 100px" hidden>
-                                    <img id="preview" src="{{record.img}}" width="100" height="100" style="display: block;" />
-                                </span>
                                  <div class="uploader-list-container">
                                     <div class="queueList">
                                         <div id="dndArea" class="placeholder">
@@ -196,6 +195,15 @@
         });
    })( jQuery );
 
+    function mainIframeLoaded() {
+      $('#loadingIframe').css('display','none');
+    }
+
+    // 规则折叠
+    $('#showRuleSpecific').change(function() {
+        $('#ruleSpecific').slideToggle();
+    });
+
      //答案切换时原因折叠
     var chooseCount=0; //答案切换次数
     $('#checkResult').change(function() {
@@ -237,14 +245,9 @@
                 "pageID":parseInt($("#pageID").val()),
                 "start_time": currTime
             }
-            showUserResult(userResult);
-            if(userResult == 0||userResult == 1){
-               $('#userReason').text($.trim($('#reason').val()));
-            }else{
-               $('#userReason').text('暂无原因');
-            }
+            showResult(userResult,"userResult");
+            showReason($.trim($('#reason').val()),"userReason");
             $('#change'+ruleid).css('color', 'red');
-            $("input[name='radioCheckResult']").attr('disabled', 'true');
             $('#btnSubmit').attr('disabled', 'true');
             $('#result').slideDown();
             $.ajax({ //表单提交
@@ -256,7 +259,7 @@
                 success:function (result) {
                     if (result["resultStatus"] == "SUCCESS") {
                       $('#stdReason').text(result['stdReason']);
-                      showStdResult(result['std_result']);
+                      showResult(result['std_result'],"stdResult");
                     }
                 }
             });
@@ -264,9 +267,6 @@
     });
 
      function changeFrom(ruleid){
-          $('#result').slideUp();
-          $("input[name='radioCheckResult']").prop('disabled', false);
-          $('#btnSubmit').prop('disabled', false);
            window.ruleid=ruleid;
            var itemInfo={
               "ruleID":ruleid,
@@ -281,28 +281,33 @@
                 success:function (result) {
                     rule =JSON.parse(result.rule);
                     record =JSON.parse(result.record);
+                    console.log(record);
                     item =JSON.parse(result.item);
                     $('#title').text(rule[0].fields.title); //检测规则
                     $('#description').text(rule[0].fields.description);
                     $('#checkMethod').text(rule[0].fields.check_method);
                     $('#passCondition').text(rule[0].fields.pass_condition);
                     if(record!='') {  //显示记录结果
-                        $("input[name='radioCheckResult']").attr('disabled', 'true');
+                        $('#checkReason').slideUp();
                         $('#btnSubmit').attr('disabled', 'true');
                         $('#result').slideDown();
-                        showUserResult(record[0].fields.user_result);
-                        $(":radio[name='radioCheckResult'][value='" + record[0].fields.reason + "']").prop("checked", "checked");
-                        if(record[0].fields.reason!=''){
-                           $('#userReason').text(record[0].fields.reason); //检测结果
+                        showReason(record[0].fields.reason,'userReason');
+                        if(item){
+                            showReason(item[0].fields.text_reason,'stdReason');
                         }else{
-                           $('#userReason').text('暂无原因');
+                            $('#stdReason').val('暂无原因');
                         }
-                        if(item[0].fields.text_reason!=''){
-                            $('#stdReason').text(item[0].fields.text_reason);
-                        } else {
-                            $('#stdReason').text('暂无原因');
-                        }
-                        showStdResult(record[0].fields.std_result);
+                        showReason(item[0].fields.text_reason,'stdReason');
+                        showResult(record[0].fields.user_result,'userResult');
+                        showResult(record[0].fields.std_result,'stdResult');
+                    }else {
+                        $('#reason').val("");
+                        $('#result').slideUp();
+                        $('#checkReason').slideDown();
+                        $('#btnSubmit').prop('disabled', false);
+                        $(":radio[name='radioCheckResult'][value='0']").prop("checked", "checked");
+                        $('#freqAns').get(0).selectedIndex = 0;
+                        closeUploader();
                     }
                 }
             });
@@ -312,6 +317,27 @@
         $('#next').click(function() {
            window.location="{% url 'learningsystem:study' %}";
         })
+
+
+    /*关闭上传框窗口后恢复上传框初始状态*/
+    function closeUploader() {
+        // 移除所有缩略图并将上传文件移出上传序列
+        for (var i = 0; i < uploader.getFiles().length; i++) {
+            // 将图片从上传序列移除
+            uploader.removeFile(uploader.getFiles()[i]);
+            // 将图片从缩略图容器移除
+            var $li = $('#' + uploader.getFiles()[i].id);
+            $li.off().remove();
+        }
+        setState('pedding');
+        // 重置文件总个数和总大小
+        fileCount = 0;
+        fileSize = 0;
+        // 重置uploader，目前只重置了文件队列
+        uploader.reset();
+        // 更新状态等，重新计算文件总个数和总大小
+        updateStatus();
+    }
 
 </script>
 </body>

@@ -16,6 +16,7 @@ def rule(request):
     return render(request, 'rule.html')
 
 
-def login(request, username):
-    request.session['username'] = username
+def login(request, userid):
+    print(userid)
+    request.session['userid'] = userid
     return HttpResponseRedirect(reverse('page:index'))

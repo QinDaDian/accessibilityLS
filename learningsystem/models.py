@@ -20,7 +20,7 @@ class Item(BaseModel):
     img_reason = models.ImageField('图片理由', null=True)
 
 
-class Record(models.Model):
+class Record(BaseModel):
     RESULT = (
         (0, '不通过'),
         (1, '通过'),

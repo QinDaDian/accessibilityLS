@@ -39,15 +39,15 @@
                     </tr>
                     </thead>
                     <tbody>
-                        {% for d in rule_list %}
-                            <tr>
-                                <td> <input type="checkbox" name="checkchild" id="rule{{d.rule_id}}" value="{{d.rule_id}}" checked /></td>
-                                <td>{{ d.property }}</td>
-                                <td>{{ d.title }}</td>
-                                <td>0</td>
-                                <td>0</td>
-                            </tr>
-                         {% endfor %}
+                        {% for d in list %}
+                                <tr>
+                                    <td> <input type="checkbox" name="checkchild" id="rule{{d.rule_id}}" value="{{d.rule_id}}" checked /></td>
+                                    <td>{{ d.property}}</td>
+                                    <td>{{ d.title }}</td>
+                                    <td>{{ d.right_num }}</td>
+                                    <td>{{ d.wrong_num }}</td>
+                                </tr>
+                        {% endfor %}
                   </tbody>
                 </table>
             </div>
