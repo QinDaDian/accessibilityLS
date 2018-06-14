@@ -63,7 +63,7 @@ function removejscssfile(filename, filetype){
             allsuspects[i].parentNode.removeChild(allsuspects[i]);
     }
 }
-
+//选项结果转换
     function  showResult(result,id) {
         var obj = document.getElementById(id);
         if(result == 0) {
@@ -77,6 +77,7 @@ function removejscssfile(filename, filetype){
         }
     }
 
+//理由转换
   function  showReason(reason, id) {
         var obj = document.getElementById(id);
         if(reason != '') {
@@ -85,6 +86,7 @@ function removejscssfile(filename, filetype){
             obj.innerText='暂无原因';
         }
     }
+
 
 
 

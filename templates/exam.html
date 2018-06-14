@@ -5,10 +5,6 @@
      {% include "common/head.html"%}
     <style type="text/css">
         /*change the default*/
-        .navbar {
-            margin-bottom: 0;
-        }
-
         iframe {
             display: block; /* iframes are inline by default */
             border: none; /* Reset default border */
@@ -18,12 +14,10 @@
             /*考虑到响应式，标题栏的高度应该是变化的，不展开时是64px*/
             padding: 0 0 64px 0 !important;
         }
-
         .form-group {
             margin-top: 0;
             padding-bottom: 0;
         }
-
         .form-control, .radio label {
             font-size: 14px !important;
         }
@@ -125,11 +119,8 @@
                             <textarea class="form-control " rows="3" id="reason"></textarea>
                         </div>
                          <span class="help-block">请务必给出通过/不通过的原因</span>
-                         <div id="wrapper">
+                        <div id="wrapper">
                             <div id="container">
-                                <span id="localImag" style="height: 100px; width: 100px" hidden>
-                                    <img id="preview" src="" width="100" height="100" style="display: block;" />
-                                </span>
                                  <div class="uploader-list-container">
                                     <div class="queueList">
                                         <div id="dndArea" class="placeholder">
@@ -137,14 +128,14 @@
                                         </div>
                                     </div>
                                     <div class="statusBar" style="display:none;">
-                                        <div class="progress"> <span class="text">0%</span> <span class="percentage"></span></div>
+                                        <div class="progress"> <span class="text">0%</span> <span class="percentage"></span> </div>
                                         <div class="btns">
                                             <div id="filePicker2"></div>
                                             <div class="uploadBtn">开始上传</div>
                                         </div>
                                         <div class="info"></div>
                                     </div>
-                                </div>
+                             </div>
                             </div>
                         </div>
                     </div>
@@ -185,9 +176,20 @@
 <script src="/static/js/fileUpload.js"></script>
 <script type="text/javascript">
 
-    $('footer').hide();
+  window.ruleid=parseInt($('#ruleid').val());
+    $('.footer').hide();
+    (function( $ ){
+        // 当domReady的时候开始初始化
+        $(function() {
+           window.currTime=new Date().toLocaleString('chinese',{hour12:false}); //截取时间
+            var arg={
+                "ruleID" : ruleid,
+                "pageID":parseInt($("#pageID").val()),
+            };
+            uploadReady('{% url 'learningsystem:swfUpload' %}',arg);
+        });
+   })( jQuery );
 
-    window.ruleid=parseInt($('#ruleid').val());
     $(function () {
         //确认提前交卷
         $('#modalSubBtn').click(function () {

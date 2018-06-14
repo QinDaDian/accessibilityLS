@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 
+import os
 from django.core.serializers import serialize
 from django.db import connection
 from django.db.models import Count
@@ -31,6 +32,7 @@ def ruleList(request):
                    " group by rule_id) lr "
                    "ON pr.rule_id=lr.rule_id "
                    "WHERE pr.implemented=1 "
+                    "AND pr.type!=1 "
                    "ORDER BY pr.rule_id")
     list = dictfetchall(cursor)  # 读取所有
     cursor.close()
@@ -42,6 +44,11 @@ def ruleList(request):
 
 @authentication
 def study(request):
+    imgs = request.session['IMGs']
+    if imgs:
+        for img in imgs:
+            os.remove('%s/%s' % (settings.MEDIA_ROOT, img))
+    request.session['IMGs'] = []
     if request.method == "POST":
         ruleids = request.POST.getlist('checkchild')
         request.session['ruleids'] = ruleids
@@ -115,6 +122,11 @@ def submit_learn(request):
 # 切换学习项
 def change_item(request):
     if request.is_ajax():
+        imgs = request.session['IMGs']
+        if imgs:
+            for img in imgs:
+                os.remove('%s/%s' % (settings.MEDIA_ROOT, img))
+        request.session['IMGs'] = []
         arg = json.loads(request.body.decode('utf-8'))
         rule = Rule.objects.filter(rule_id=arg['ruleID'])
         record = Record.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'],
@@ -149,6 +161,7 @@ def swfUpload(request):
     else:
         IMGs.append(newName)
     request.session['IMGs'] = IMGs
+    print(request.session['IMGs'])
     return HttpResponse("success")
 
 
@@ -161,6 +174,6 @@ def dictfetchall(cursor):
     # 将游标返回的结果保存到一个字典对象中
     desc = cursor.description
     return [
-    dict(zip([col[0] for col in desc], row))
-    for row in cursor.fetchall()
+        dict(zip([col[0] for col in desc], row))
+        for row in cursor.fetchall()
     ]

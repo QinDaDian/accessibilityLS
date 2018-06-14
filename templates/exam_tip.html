@@ -16,7 +16,7 @@
 
             <div class="col-md-10 col-md-offset-1" style="margin-top: 28px;">
                 <p>1. 考试时长：2小时</p>
-                <p>2. 本次考试共${examination.questionNum}道题，可以提前交卷</p>
+                <p>2. 本次考试共{{num}}道题，可以提前交卷</p>
                 <p>3. 若未能在有效时间内提交试卷，系统将自动提交试卷</p>
                 <p>4. 端正考风，严肃考纪</p>
 
@@ -27,7 +27,7 @@
                 </div>
 
                 <fieldset disabled="true" id="btnField"  style="margin-top: 35px;">
-                    <a href="{% url 'exam:exam'%}" id="startTest" class="btn btn-primary btn-lg btn-block btn-raised">开始测试</a>
+                    <a href="{% url 'exam:initexam' num %}" id="startTest" class="btn btn-primary btn-lg btn-block btn-raised">开始测试</a>
 {#                  <a href="{% url 'exam: ' examination.examinationId 1 %}" id="startTest" class="btn btn-primary btn-lg btn-block btn-raised">开始测试</a>#}
                 </fieldset>
             </div>
@@ -37,6 +37,8 @@
     {% include "common/footer.html"%}
 
     <script type="text/javascript">
+
+
         $("#testTipCheck").on("change", function() {
             var btnField = document.getElementById("btnField")
             if(btnField.disabled) {

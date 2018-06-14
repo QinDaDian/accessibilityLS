@@ -1,8 +1,5 @@
 // //文件批量上传
   function uploadReady(action,arg) {
-// (function( $ ){
-//         // 当domReady的时候开始初始化
-//         $(function() {
      var $wrap = $('.uploader-list-container'),
 
          // 图片容器
@@ -24,7 +21,7 @@
          $progress = $statusBar.find('.progress').hide(),
 
          // 添加的文件数量
-         fileCount = 0,
+        fileCount = 0,
 
          // 添加的文件总大小
          fileSize = 0,
@@ -553,8 +550,27 @@
 
      $upload.addClass('state-' + state);
      updateTotalProgress();
+
+      /*关闭上传框窗口后恢复上传框初始状态*/
+  closeUploader = function() {
+        // 移除所有缩略图并将上传文件移出上传序列
+        for (var i = 0; i < uploader.getFiles().length; i++) {
+            // 将图片从上传序列移除
+            uploader.removeFile(uploader.getFiles()[i]);
+            // 将图片从缩略图容器移除
+            var $li = $('#' + uploader.getFiles()[i].id);
+            $li.off().remove();
+        }
+        setState('pedding');
+        // 重置文件总个数和总大小
+        fileCount = 0;
+        fileSize = 0;
+        // 重置uploader，目前只重置了文件队列
+        uploader.reset();
+        // 更新状态等，重新计算文件总个数和总大小
+        updateStatus();
+    }
  }
-//     });
-// })( jQuery );
+
 
 
