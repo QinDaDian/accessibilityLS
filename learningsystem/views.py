@@ -23,7 +23,6 @@ def ruleList(request):
     return render(request, 'rule_list.html', context)
 
 
-
 @authentication
 def study(request):
     if request.method=="POST":
@@ -33,7 +32,7 @@ def study(request):
         ruleids = request.session.get('ruleids')
     # 规则筛选
     pages = Page.objects.all()
-    page = random.sample(list(pages),7)
+    page = random.sample(list(pages), 7)
     if len(ruleids) == 0:
         rule_list = random.sample(list(Rule.objects.all()), 7)[0]
     else:
