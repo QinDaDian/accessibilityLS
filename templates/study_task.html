@@ -217,14 +217,12 @@
         }
     });
 
-     var userReason='';//实际不通过原因
       //常用通过/不通过原因处理
      $('#freqAns').change(function() {
         if($('#freqAns').get(0).selectedIndex == 0) {  //亲自写
             $('#reason').val('');
             $('#formFailAns').addClass('is-empty');
         } else{
-            userReason=$('#freqAns option:selected').text();
             $('#reason').val($('#freqAns option:selected').text());
             $('#formFailAns').removeClass('is-empty');
         }
@@ -232,6 +230,7 @@
     });
 
     $('#btnSubmit').click(function() {
+        var userReason= $.trim($('#reason').val());
         var checkResultInfo = {};
         var userResult = parseInt($('input:radio[name="radioCheckResult"]:checked').val());
         if((userResult == 0||userResult == 1)&&!$.trim($('#reason').val())) {
