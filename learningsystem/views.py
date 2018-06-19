@@ -21,19 +21,19 @@ from utils.decorator import authentication
 def ruleList(request):
     userid = request.session.get('userid')
     cursor = connection.cursor()
-    cursor.execute("SELECT  pr.*,coalesce(right_num,0) AS right_num,coalesce(wrong_num,0)AS  wrong_num "
-                   "from page_rule pr "
-                   "LEFT JOIN "
-                   "(SELECT rule_id,"
-                   "sum(CASE WHEN judge =1 THEN 1 ELSE 0 END) AS  right_num,"
-                   "sum(CASE WHEN judge =0 THEN 1 ELSE 0 END) AS  wrong_num "
-                   " FROM learningsystem_record "
-                   "WHERE user_id="+userid+""
-                   " group by rule_id) lr "
-                   "ON pr.rule_id=lr.rule_id "
-                   "WHERE pr.implemented=1 "
-                    "AND pr.type!=1 "
-                   "ORDER BY pr.rule_id")
+    cursor.execute("""SELECT  pr.*,coalesce(right_num,0) AS right_num,coalesce(wrong_num,0)AS  wrong_num
+                   from page_rule pr
+                   LEFT JOIN
+                   (SELECT rule_id,
+                   sum(CASE WHEN judge =1 THEN 1 ELSE 0 END) AS  right_num,
+                   sum(CASE WHEN judge =0 THEN 1 ELSE 0 END) AS  wrong_num
+                    FROM learningsystem_record
+                   WHERE user_id="+userid+"
+                    group by rule_id) lr
+                   ON pr.rule_id=lr.rule_id
+                   WHERE pr.implemented=1
+                    AND pr.type!=1
+                   ORDER BY pr.rule_id""")
     list = dictfetchall(cursor)  # 读取所有
     cursor.close()
     context = {
@@ -44,7 +44,7 @@ def ruleList(request):
 
 @authentication
 def study(request):
-    imgs = request.session['IMGs']
+    imgs = request.session.get('IMGs')
     if imgs:
         for img in imgs:
             os.remove('%s/%s' % (settings.MEDIA_ROOT, img))
@@ -148,6 +148,8 @@ def swfUpload(request):
     file_suffix = upload_file.name.split(".")[-1]  # 后缀
     curr_time = datetime.now().strftime("%Y%m%d%H%M%S%f")  # 获取当前时间
     newName = 'upload/' + curr_time + '.' + file_suffix
+    if not os.path.exists(settings.MEDIA_ROOT + '/upload'):
+        os.makedirs(settings.MEDIA_ROOT + '/upload')
     fname = '%s/%s' % (settings.MEDIA_ROOT, newName)
     with open(fname, 'wb') as pic:
         for f in upload_file.chunks():
