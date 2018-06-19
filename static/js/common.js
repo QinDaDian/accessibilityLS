@@ -63,41 +63,30 @@ function removejscssfile(filename, filetype){
             allsuspects[i].parentNode.removeChild(allsuspects[i]);
     }
 }
-
-//学习/检测页面用户结果转换
-  function  showUserResult(userResult) {
-        if(userResult == 0) {
-                $('#userResult').text('不通过');
-            } else {
-                if (userResult == 1) {
-                    $('#userResult').text('通过');
-                } else if (userResult == 2) {
-                    $('#userResult').text('不存在');
-                } else if (userResult == 3) {
-                    $('#userResult').text('不知道');
-                }
-            }
-    }
-    //学习/检测页面标准答案转换
-  function  showStdResult(stdResult) {
-        if(stdResult == 0) {
-            $('#stdResult').text('不通过');
-        }else if(stdResult == 1){
-            $('#stdResult').text('通过');
-        }else if (stdResult == 2) {
-            $('#stdResult').text('不存在');
+//选项结果转换
+    function  showResult(result,id) {
+        var obj = document.getElementById(id);
+        if(result == 0) {
+              obj.innerText='不通过';
+        }else if (result == 1) {
+              obj.innerText='通过';
+        }else if (result == 2) {
+             obj.innerText='不存在';
+        }else if (result == 3) {
+             obj.innerText='不知道';
         }
     }
 
-    //主iframe加载完成时将加载信息隐藏
-    function mainIframeLoaded() {
-      $('#loadingIframe').css('display','none');
+//理由转换
+  function  showReason(reason, id) {
+        var obj = document.getElementById(id);
+        if(reason != '') {
+           obj.innerText=reason; //检测结果原因
+        }else {
+            obj.innerText='暂无原因';
+        }
     }
 
-    // 规则折叠
-    $('#showRuleSpecific').change(function() {
-        $('#ruleSpecific').slideToggle();
-    });
 
 
 
