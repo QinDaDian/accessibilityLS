@@ -2,9 +2,10 @@ from datetime import datetime
 import json
 
 import os
+
 from django.core.serializers import serialize
 from django.db import connection
-from django.db.models import Count
+from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -57,15 +58,21 @@ def study(request):
     # 规则筛选
     pages = Page.objects.all()
     page = random.sample(list(pages), 1)[0]
-    if len(ruleids) == 0:
-        rule_list = random.sample(list(Rule.objects.filter(implemented=1)), 7)
+    if ruleids:
+        rule_list = random.sample(list(Rule.objects.filter(implemented=1).filter(~Q(type=1))), 7)
     else:
         rule_list = random.sample(list(Rule.objects.filter(rule_id__in=ruleids)), 7)
-    item = Item.objects.filter(page_id=page.page_id, rule_id__in=ruleids)
+    item = Item.objects.filter(page_id=page.page_id, rule_id=rule_list[0].rule_id)
+    rule = Rule.objects.get(rule_id=rule_list[0].rule_id)
+    if rule.freq_ans:
+        freq_ans = rule.freq_ans.split('#F#G#F#')[:-1]
+    else:
+        freq_ans = []
     context = {
         'item': item,
         'page': page,
         'rule_list': rule_list,
+        'freq_ans': freq_ans,
     }
     return render(request, 'study_task.html', context)
 
@@ -90,7 +97,6 @@ def submit_learn(request):
         start_time = datetime.strptime(arg["start_time"], "%Y/%m/%d %H:%M:%S")
         start_time = datetime.strftime(start_time, "%Y-%m-%d %H:%M:%S")
         if item:
-            print(item)
             std_result = item[0].result
             text_reason = item[0].text_reason
         else:
@@ -132,10 +138,15 @@ def change_item(request):
         record = Record.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'],
                                        user_id=request.session.get('userid'))
         item = Item.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'])
+        if rule[0].freq_ans:
+            freq_ans = rule[0].freq_ans.split('#F#G#F#')[:-1]
+        else:
+            freq_ans = []
         result = {
             "rule": tojson(rule),
             "record": tojson(record),
-            "item": tojson(item)
+            "item": tojson(item),
+            'freq_ans': freq_ans
         }
         return JsonResponse(result, safe=False)
 
