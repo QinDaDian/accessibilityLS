@@ -27,12 +27,12 @@ def ruleList(request):
                    (SELECT rule_id,
                    sum(CASE WHEN judge =1 THEN 1 ELSE 0 END) AS  right_num,
                    sum(CASE WHEN judge =0 THEN 1 ELSE 0 END) AS  wrong_num
-                    FROM learningsystem_record
-                   WHERE user_id="+userid+"
-                    group by rule_id) lr
+                   FROM learningsystem_record
+                   WHERE user_id = "+userid+"
+                   group by rule_id) lr
                    ON pr.rule_id=lr.rule_id
                    WHERE pr.implemented=1
-                    AND pr.type!=1
+                   AND pr.type!=1
                    ORDER BY pr.rule_id""")
     list = dictfetchall(cursor)  # 读取所有
     cursor.close()
@@ -79,18 +79,18 @@ def loading_iframe(request):
 @csrf_exempt
 @authentication
 def submit_learn(request):
+    # 处理图片存储路径
     if request.session.get('IMGs'):
         imgs = ','.join(request.session.get('IMGs'))
     else:
         imgs = ''
+
     if request.is_ajax():
         arg = json.loads(request.body.decode('utf-8'))
         item = Item.objects.filter(page_id=arg['pageID'], rule_id=arg['ruleID'])
-        print(arg["start_time"])  # 2018/6/4 21:40:24
         start_time = datetime.strptime(arg["start_time"], "%Y/%m/%d %H:%M:%S")
         start_time = datetime.strftime(start_time, "%Y-%m-%d %H:%M:%S")
         if item:
-            print(item)
             std_result = item[0].result
             text_reason = item[0].text_reason
         else:
@@ -107,7 +107,6 @@ def submit_learn(request):
             change_count=arg['chooseCount'],
             judge=1 if std_result == arg['userResult'] else 0,
             start_time=start_time,
-            create_time=start_time,
         )
         # 存下图片路径后删除session
         request.session['IMGs'] = []
