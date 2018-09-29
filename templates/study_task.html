@@ -119,15 +119,16 @@
                             <div>
                                 <select id="freqAns" class="form-control" >
                                   <option>亲自写(自带清空技能)</option>
-                                   {% if item %}
-                                       {% if item.text_reason %}
-                                            <option>{{item.text_reason}}</option>
-                                       {% else %}
-                                            <option>不存在</option>
-                                       {% endif %}
-                                   {% else %}
-                                        <option>不存在</option>
-                                   {% endif %}
+                                  {% if freq_ans %}
+                                       {% for ans in freq_ans %}
+                                            <option>{{ans}}</option>
+                                       {% endfor %}
+                                  {% endif %}
+                                  {% if item and item.text_reason %}
+                                       <option>{{item.text_reason}}</option>
+                                  {% else %}
+                                       <option>不存在</option>
+                                  {% endif %}
                                 </select>
                             </div>
                         </div>
@@ -278,23 +279,34 @@
                 url: '{% url 'learningsystem:change_item' %}',
                 async:false,
                 success:function (result) {
-                    rule =JSON.parse(result.rule);
-                    record =JSON.parse(result.record);
-                    console.log(record);
-                    item =JSON.parse(result.item);
+                    rule = JSON.parse(result.rule);
+                    record = JSON.parse(result.record);
+                    freq_ans = result.freq_ans;
+                    item = JSON.parse(result.item);
                     $('#title').text(rule[0].fields.title); //检测规则
                     $('#description').text(rule[0].fields.description);
                     $('#checkMethod').text(rule[0].fields.check_method);
                     $('#passCondition').text(rule[0].fields.pass_condition);
+                    $("#freqAns").empty();                                           //常见原因
+                    $("#freqAns").append("<option>亲自写(自带清空技能)</option>");
+                    for (var i=0;i<freq_ans.length;i++) {
+                        $("#freqAns").append("<option>"+freq_ans[i]+"</option>");
+                    }
+                    console.log(item);
+                    if(item!=''&& item[0].fields.text_reason!=null){
+                        $("#freqAns").append("<option>"+item[0].fields.text_reason +"</option>");
+                    }else{
+                        $("#freqAns").append("<option>不存在</option>");
+                    }
                     if(record!='') {  //显示记录结果
                         $('#checkReason').slideUp();
                         $('#btnSubmit').attr('disabled', 'true');
                         $('#result').slideDown();
                         showReason(record[0].fields.reason,'userReason');
-                        if(item){
+                        if(item!=''){
                             showReason(item[0].fields.text_reason,'stdReason');
                         }else{
-                            $('#stdReason').val('暂无原因');
+                             $('#stdReason').val('暂无原因');
                         }
                         showReason(item[0].fields.text_reason,'stdReason');
                         showResult(record[0].fields.user_result,'userResult');
