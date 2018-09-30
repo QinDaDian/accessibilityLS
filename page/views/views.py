@@ -8,8 +8,8 @@ from utils.decorator import authentication
 # Create your views here.
 @authentication
 def index(request):
-    return render(request, 'index.html')
-
+    # return render(request, 'index.html')
+    return HttpResponseRedirect(reverse('learningsystem:ruleList'))
 
 @authentication
 def rule(request):
@@ -19,4 +19,4 @@ def rule(request):
 def login(request, userid):
     print(userid)
     request.session['userid'] = userid
-    return HttpResponseRedirect(reverse('page:index'))
+    return HttpResponseRedirect(reverse('learningsystem:ruleList'))
